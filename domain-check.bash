@@ -110,7 +110,7 @@ function must() {
   "$@" || fatal_with_logs "failure"
 }
 
-log -n "building the latest version of miniooni... "
+log -n "building the latest version of miniooni (may take long time!)... "
 must run go build -tags nomk github.com/ooni/probe-engine/cmd/miniooni
 log "done"
 
@@ -190,26 +190,26 @@ done
 
 function getcertificatefile() {
   local filename=$(mktemp ./aladdin.XXXXXX)
-  tail -n1 report.jsonl|jq -r '.test_keys.tls_handshakes|.[]|.peer_certificates|.[0]|.data'|base64 --decode > $filename
+  tail -n1 report.jsonl|jq -r '.test_keys.tls_handshakes|.[]|.peer_certificates|.[0]|.data'|base64 -d > $filename
   echo $filename
 }
 
 checking "for HTTPS certificate issuer"
 urlgetter -ONoTLSVerify=true -OTLSServerName=$domain -i tlshandshake://$ip:443
 certfile=$(getcertificatefile)
-log $(openssl x509 -inform der -in $certfile -issuer|head -n1|sed 's/^issuer= //g')
+log $(openssl x509 -inform der -in $certfile -noout -issuer|head -n1|sed 's/^issuer=\ *//g')
 
 checking "for HTTPS certificate subject"
-log $(openssl x509 -inform der -in $certfile -subject|head -n1|sed 's/^subject= //g')
+log $(openssl x509 -inform der -in $certfile -noout -subject|head -n1|sed 's/^subject=\ *//g')
 
 checking "for HTTPS certificate notBefore"
-log $(openssl x509 -inform der -in $certfile -dates|head -n1|sed 's/^notBefore=//g')
+log $(openssl x509 -inform der -in $certfile -noout -dates|head -n1|sed 's/^notBefore=//g')
 
 checking "for HTTPS certificate notAfter"
-log $(openssl x509 -inform der -in $certfile -dates|sed -n 2p|sed 's/^notAfter=//g')
+log $(openssl x509 -inform der -in $certfile -noout -dates|sed -n 2p|sed 's/^notAfter=//g')
 
 checking "for HTTPS certificate SHA1 fingerprint"
-log $(openssl x509 -inform der -in $certfile -fingerprint|head -n1|sed 's/^SHA1 Fingerprint=//g')
+log $(openssl x509 -inform der -in $certfile -noout -fingerprint|head -n1|sed 's/^SHA1 Fingerprint=//g')
 
 function getbodyfile() {
   # Implementation note: requests stored in LIFO order
