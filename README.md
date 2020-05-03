@@ -45,7 +45,7 @@ long time to build the `./miniooni` binary from scratch.
 You need to have Go >= 1.14 installed. Try:
 
 ```bash
-./domain-check.bash <domain>
+./domain-check.bash www.google.com
 ```
 
 The script will tell you whether you're missing other packages.
