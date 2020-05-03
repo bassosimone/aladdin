@@ -134,7 +134,7 @@ function getipv4first() {
   tail -n1 $report_file|jq -r ".test_keys.queries|.[]|select(.hostname==\"$1\")|select(.query_type==\"A\")|.answers|.[0].ipv4"
 }
 
-doh_cache="-ODNSCache=8.8.4.4 dns.google"
+doh_cache="-ODNSCache=dns.google 8.8.8.8 8.8.4.4"
 doh_url="-OResolverURL=doh://google"
 
 log -n "getting $test_helper's IP address... "
