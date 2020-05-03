@@ -34,7 +34,7 @@ docker run --cap-drop=all -it -v`pwd`:/aladdin -w/aladdin bassosimone-aladdin
 Run the measurement script from inside the container:
 
 ```bash
-./domain-check.bash <domain>
+./domain-check.bash www.google.com
 ```
 
 Be patient: the first time you run `./domain-check.bash` it will take a
