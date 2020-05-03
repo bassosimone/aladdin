@@ -224,18 +224,24 @@ function diffbodyfile() {
   echo $filename
 }
 
-checking "for HTTP body consistency"
-urlgetter -i http://$domain
+log -n "fetching the homepage over HTTP... "
+urlgetter -ONoTLSVerify=true -i http://$domain
 body_vanilla=$(getbodyfile)
-urlgetter -OTunnel=psiphon -i http://$domain
+log "done (see $body_vanilla)"
+
+checking "for HTTP body consistency"
+urlgetter -ONoTLSVerify=true -OTunnel=psiphon -i http://$domain
 body_tunnel=$(getbodyfile)
 body_diff=$(diffbodyfile $body_vanilla $body_tunnel)
 { [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
 
-checking "for HTTPS body consistency"
-urlgetter -i https://$domain
+log -n "fetching the homepage over HTTPS... "
+urlgetter -ONoTLSVerify=true -i https://$domain
 body_vanilla=$(getbodyfile)
-urlgetter -OTunnel=psiphon -i https://$domain
+log "done (see $body_vanilla)"
+
+checking "for HTTPS body consistency"
+urlgetter -ONoTLSVerify=true -OTunnel=psiphon -i https://$domain
 body_tunnel=$(getbodyfile)
 body_diff=$(diffbodyfile $body_vanilla $body_tunnel)
 { [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
