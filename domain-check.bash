@@ -231,10 +231,6 @@ body_tunnel=$(getbodyfile)
 body_diff=$(diffbodyfile $body_vanilla $body_tunnel)
 { [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
 
-function getmetrics() {
-  cat report.jsonl|tail -n2|head -n1|jq '.test_keys.network_events|.[]'
-}
-
 checking "for HTTPS body consistency"
 urlgetter -i https://$domain
 body_vanilla=$(getbodyfile)
