@@ -37,8 +37,8 @@ function disclaimer_then_die() {
 
 github.com/bassosimone/aladdin contains experimental OONI code for performing
 network measurements. Because this is experimental code, we cannot guarantee the
-same level of vetting of non-experimental OONI code. In particular, the logic
-that generate yes/no results in this script is still experimental/alpha.
+same level of vetting of non-experimental OONI code. On top of that, the logic
+that generates yes/no/maybe results in this script is alpha stage code.
 
 This repository will upload measurements to the OONI collector. You should read
 OONI's data policy <https://ooni.org/about/data-policy> as well as the docs on
@@ -148,11 +148,11 @@ function getfailure() {
 
 checking "for sni-triggered blocking"
 urlgetter -OTLSServerName=$domain -i tlshandshake://$test_helper_ip:443
-{ [ "$(getfailure)" = "ssl_invalid_hostname" ] && log "no"; } || log "yes"
+{ [ "$(getfailure)" = "ssl_invalid_hostname" ] && log "no"; } || log "maybe"
 
 checking "for host-header-triggered blocking"
 urlgetter -OHTTPHost=$domain -ONoFollowRedirects=true -i http://$test_helper_ip
-{ [ "$(getfailure)" = "null" ] && log "no"; } || log "yes"
+{ [ "$(getfailure)" = "null" ] && log "no"; } || log "maybe"
 
 checking "for DNS injection"
 urlgetter -OResolverURL=udp://$test_helper_ip:53 -i dnslookup://$domain
@@ -185,7 +185,7 @@ ipv4_overlap_list=$(comm -12 $ipv4_system_list $ipv4_doh_list)
 for ip in $(cat $ipv4_system_list); do
   checking "whether $ip is valid for $domain"
   urlgetter -OTLSServerName=$domain -i tlshandshake://$ip:443
-  { [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
+  { [ "$(getfailure)" = "null" ] && log "yes"; } || log "maybe"
 done
 
 function getcertificatefile() {
