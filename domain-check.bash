@@ -37,7 +37,8 @@ function disclaimer_then_die() {
 
 github.com/bassosimone/aladdin contains experimental OONI code for performing
 network measurements. Because this is experimental code, we cannot guarantee the
-same level of vetting of non-experimental OONI code.
+same level of vetting of non-experimental OONI code. In particular, the logic
+that generate yes/no results in this script is still experimental/alpha.
 
 This repository will upload measurements to the OONI collector. You should read
 OONI's data policy <https://ooni.org/about/data-policy> as well as the docs on
