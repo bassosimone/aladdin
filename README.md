@@ -28,7 +28,7 @@ docker build -t bassosimone-aladdin .
 Enter into the container:
 
 ```bash
-docker run --cap-drop=all -it -v`pwd`:/aladdin -w/aladdin bassosimone-aladdin
+docker run -it -v`pwd`:/aladdin -w/aladdin bassosimone-aladdin
 ```
 
 Run the measurement script from inside the container:
