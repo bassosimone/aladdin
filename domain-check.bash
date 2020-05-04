@@ -213,15 +213,15 @@ function printcertificate() {
   local certfile
   certfile=$(getcertificatefile)
   checking "for x509 certificate issuer"
-  log $(openssl x509 -inform der -in $certfile -noout -issuer|head -n1|sed 's/^issuer=\ *//g')
+  log $(openssl x509 -inform der -in $certfile -noout -issuer 2>/dev/null|head -n1|sed 's/^issuer=\ *//g')
   checking "for x509 certificate subject"
-  log $(openssl x509 -inform der -in $certfile -noout -subject|head -n1|sed 's/^subject=\ *//g')
+  log $(openssl x509 -inform der -in $certfile -noout -subject 2>/dev/null|head -n1|sed 's/^subject=\ *//g')
   checking "for x509 certificate notBefore"
-  log $(openssl x509 -inform der -in $certfile -noout -dates|head -n1|sed 's/^notBefore=//g')
+  log $(openssl x509 -inform der -in $certfile -noout -dates 2>/dev/null|head -n1|sed 's/^notBefore=//g')
   checking "for x509 certificate notAfter"
-  log $(openssl x509 -inform der -in $certfile -noout -dates|sed -n 2p|sed 's/^notAfter=//g')
+  log $(openssl x509 -inform der -in $certfile -noout -dates 2>/dev/null|sed -n 2p|sed 's/^notAfter=//g')
   checking "for x509 certificate SHA1 fingerprint"
-  log $(openssl x509 -inform der -in $certfile -noout -fingerprint|head -n1|sed 's/^SHA1 Fingerprint=//g')
+  log $(openssl x509 -inform der -in $certfile -noout -fingerprint 2>/dev/null|head -n1|sed 's/^SHA1 Fingerprint=//g')
 }
 
 function getbodyfile() {
@@ -258,7 +258,7 @@ urlgetter -Astep=https_blockpage_fetch \
           "-ODNSCache=$domain $(cat $ipv4_system_list)" \
           -ONoTLSVerify=true \
           -ihttps://$domain/
-{ [ "$(getfailure)" = "null" ] && log "yes"; } || "no"
+{ [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
 printcertificate
 body_noverify=$(getbodyfile)
 log "webpage body available at... $body_noverify"
@@ -270,7 +270,7 @@ checking "whether we can retrieve a webpage using the alternate resolver"
 urlgetter -Astep=doh_resolver_validation \
           "-ODNSCache=$domain $(cat $ipv4_doh_list)" \
           -ihttps://$domain/
-{ [ "$(getfailure)" = "null" ] && log "yes"; } || "no"
+{ [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
 printcertificate
 body_doh=$(getbodyfile)
 log "webpage body available at... $body_doh"
