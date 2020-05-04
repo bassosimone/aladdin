@@ -144,7 +144,7 @@ github.com/marten-seemann/qtls
 github.com/miekg/dns
 # github.com/montanaflynn/stats v0.6.3
 github.com/montanaflynn/stats
-# github.com/ooni/probe-engine v0.10.1-0.20200504103639-bee591d49f59
+# github.com/ooni/probe-engine v0.10.1-0.20200504210010-52df3cf408db
 ## explicit
 github.com/ooni/probe-engine
 github.com/ooni/probe-engine/atomicx
