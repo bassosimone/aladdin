@@ -182,8 +182,11 @@ github.com/onsi/gomega v1.4.3/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1Cpa
 github.com/onsi/gomega v1.5.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
 github.com/onsi/gomega v1.7.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
 github.com/ooni/probe-engine v0.10.0 h1:A/Hnk2xwpvePL1bbj14KhO0JHy+5rYc2iyRJM5qBcrA=
-github.com/ooni/probe-engine v0.10.1-0.20200502082841-13b6db5059c0 h1:nNZ1Aup5Dn1a/HEnwQrDqBQPjd91xv1ocqTrYshiYrE=
-github.com/ooni/probe-engine v0.10.1-0.20200502082841-13b6db5059c0/go.mod h1:7JECIK592CDjdc5I+7NLIqmIQlmE0C/KS11kuUoO44s=
+github.com/ooni/probe-engine v0.10.0/go.mod h1:xMxsjy/M9FnOpLZlZonBuHVyj6XFWGwXTVVbEwd8lS4=
+github.com/ooni/probe-engine v0.10.1-0.20200503212328-410e4fb2b977 h1:N7QocmGgYq1UIwBlwdiC93wqZlNJmAt/VlHRzCbH9DM=
+github.com/ooni/probe-engine v0.10.1-0.20200503212328-410e4fb2b977/go.mod h1:7JECIK592CDjdc5I+7NLIqmIQlmE0C/KS11kuUoO44s=
+github.com/ooni/probe-engine v0.10.1-0.20200504103639-bee591d49f59 h1:ULPzLmLDn2aBtRJrKv55VYezNmRZe4aZfRXjkmrYlDc=
+github.com/ooni/probe-engine v0.10.1-0.20200504103639-bee591d49f59/go.mod h1:7JECIK592CDjdc5I+7NLIqmIQlmE0C/KS11kuUoO44s=
 github.com/openconfig/gnmi v0.0.0-20190823184014-89b2bf29312c/go.mod h1:t+O9It+LKzfOAhKTT5O0ehDix+MTqbtT0T9t+7zzOvc=
 github.com/openconfig/reference v0.0.0-20190727015836-8dfd928c9696/go.mod h1:ym2A+zigScwkSEb/cVQB0/ZMpU3rqiH6X7WRRsxgOGw=
 github.com/oschwald/geoip2-golang v1.4.0 h1:5RlrjCgRyIGDz/mBmPfnAF4h8k0IAcRv9PvrpOfz+Ug=

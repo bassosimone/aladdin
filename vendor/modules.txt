@@ -1,0 +1,328 @@
+# git.schwanenlied.me/yawning/bsaes.git v0.0.0-20190320102049-26d1add596b6
+git.schwanenlied.me/yawning/bsaes.git
+git.schwanenlied.me/yawning/bsaes.git/ct32
+git.schwanenlied.me/yawning/bsaes.git/ct64
+git.schwanenlied.me/yawning/bsaes.git/ghash
+git.schwanenlied.me/yawning/bsaes.git/internal/modes
+# git.torproject.org/pluggable-transports/goptlib.git v1.1.0
+git.torproject.org/pluggable-transports/goptlib.git
+# github.com/AndreasBriese/bbloom v0.0.0-20170702084017-28f7e881ca57
+github.com/AndreasBriese/bbloom
+# github.com/Psiphon-Labs/bolt v0.0.0-20200203172706-f3d58e369264
+github.com/Psiphon-Labs/bolt
+# github.com/Psiphon-Labs/chacha20 v0.2.1-0.20200128191310-899a4be52863
+github.com/Psiphon-Labs/chacha20
+github.com/Psiphon-Labs/chacha20/internal/subtle
+# github.com/Psiphon-Labs/dns v0.0.0-20170814182607-d23cdaf67bbc
+github.com/Psiphon-Labs/dns
+# github.com/Psiphon-Labs/goarista v0.0.0-20160825065156-d002785f4c67
+github.com/Psiphon-Labs/goarista/monotime
+# github.com/Psiphon-Labs/goptlib v0.0.0-20200406165125-c0e32a7a3464
+github.com/Psiphon-Labs/goptlib
+# github.com/Psiphon-Labs/net v0.0.0-20191204183604-f5d60dada742
+github.com/Psiphon-Labs/net/http/httpguts
+github.com/Psiphon-Labs/net/http2
+github.com/Psiphon-Labs/net/http2/hpack
+github.com/Psiphon-Labs/net/idna
+# github.com/Psiphon-Labs/psiphon-tunnel-core v2.0.11+incompatible
+github.com/Psiphon-Labs/psiphon-tunnel-core/ClientLibrary/clientlib
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/buildinfo
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/crypto/Yawning/chacha20
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/crypto/internal/subtle
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/crypto/nacl/secretbox
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/crypto/ssh
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/errors
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/fragmentor
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/marionette
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/obfuscator
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/osl
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/parameters
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/prng
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/protocol
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/h2quic
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/internal/ackhandler
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/internal/congestion
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/internal/crypto
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/internal/flowcontrol
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/internal/handshake
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/internal/protocol
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/internal/utils
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/internal/wire
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/qerr
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/quic/gquic-go/quic-go-certificates
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/sss
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/stacktrace
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/tactics
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/tapdance
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/tun
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/values
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common/wildcard
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/transferstats
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/upstreamproxy
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/upstreamproxy/go-ntlm/ntlm
+github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/upstreamproxy/go-ntlm/ntlm/md4
+# github.com/Psiphon-Labs/quic-go v0.14.1-0.20200306193310-474e74c89fab
+github.com/Psiphon-Labs/quic-go
+github.com/Psiphon-Labs/quic-go/http3
+github.com/Psiphon-Labs/quic-go/internal/ackhandler
+github.com/Psiphon-Labs/quic-go/internal/congestion
+github.com/Psiphon-Labs/quic-go/internal/flowcontrol
+github.com/Psiphon-Labs/quic-go/internal/handshake
+github.com/Psiphon-Labs/quic-go/internal/protocol
+github.com/Psiphon-Labs/quic-go/internal/qerr
+github.com/Psiphon-Labs/quic-go/internal/utils
+github.com/Psiphon-Labs/quic-go/internal/wire
+github.com/Psiphon-Labs/quic-go/quictrace
+github.com/Psiphon-Labs/quic-go/quictrace/pb
+# github.com/Psiphon-Labs/tls-tris v0.0.0-20200326183334-7ff412878bba
+github.com/Psiphon-Labs/tls-tris
+github.com/Psiphon-Labs/tls-tris/cipherhw
+# github.com/agl/ed25519 v0.0.0-20170116200512-5312a6153412
+github.com/agl/ed25519/edwards25519
+github.com/agl/ed25519/extra25519
+# github.com/apex/log v1.1.4
+github.com/apex/log
+# github.com/armon/go-proxyproto v0.0.0-20180202201750-5b7edb60ff5f
+github.com/armon/go-proxyproto
+# github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5
+github.com/armon/go-socks5
+# github.com/bifurcation/mint v0.0.0-20180306135233-198357931e61
+github.com/bifurcation/mint
+github.com/bifurcation/mint/syntax
+# github.com/cheekybits/genny v1.0.0
+github.com/cheekybits/genny/generic
+# github.com/cognusion/go-cache-lru v0.0.0-20170419142635-f73e2280ecea
+github.com/cognusion/go-cache-lru
+# github.com/creack/goselect v0.1.1
+github.com/creack/goselect
+# github.com/dchest/siphash v1.2.1
+github.com/dchest/siphash
+# github.com/dgraph-io/badger v1.5.4-0.20180815194500-3a87f6d9c273
+github.com/dgraph-io/badger
+github.com/dgraph-io/badger/options
+github.com/dgraph-io/badger/protos
+github.com/dgraph-io/badger/skl
+github.com/dgraph-io/badger/table
+github.com/dgraph-io/badger/y
+# github.com/dgryski/go-farm v0.0.0-20180109070241-2de33835d102
+github.com/dgryski/go-farm
+# github.com/dsnet/compress v0.0.1
+github.com/dsnet/compress/brotli
+github.com/dsnet/compress/internal
+github.com/dsnet/compress/internal/errors
+# github.com/golang/protobuf v1.3.3
+github.com/golang/protobuf/proto
+# github.com/gorilla/websocket v1.4.2
+github.com/gorilla/websocket
+# github.com/grafov/m3u8 v0.0.0-20171211212457-6ab8f28ed427
+github.com/grafov/m3u8
+# github.com/hashicorp/golang-lru v0.5.1
+github.com/hashicorp/golang-lru
+github.com/hashicorp/golang-lru/simplelru
+# github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
+github.com/iancoleman/strcase
+# github.com/juju/ratelimit v1.0.2-0.20191002062651-f60b32039441
+github.com/juju/ratelimit
+# github.com/konsorten/go-windows-terminal-sequences v1.0.1
+github.com/konsorten/go-windows-terminal-sequences
+# github.com/m-lab/ndt-server v0.13.4
+github.com/m-lab/ndt-server/metadata
+github.com/m-lab/ndt-server/ndt7/model
+# github.com/m-lab/ndt7-client-go v0.3.0
+github.com/m-lab/ndt7-client-go/spec
+# github.com/m-lab/tcp-info v1.3.0
+github.com/m-lab/tcp-info/tcp
+# github.com/marten-seemann/qpack v0.1.0
+github.com/marten-seemann/qpack
+# github.com/marten-seemann/qtls v0.4.1
+github.com/marten-seemann/qtls
+# github.com/miekg/dns v1.1.29
+github.com/miekg/dns
+# github.com/montanaflynn/stats v0.6.3
+github.com/montanaflynn/stats
+# github.com/ooni/probe-engine v0.10.1-0.20200504103639-bee591d49f59
+## explicit
+github.com/ooni/probe-engine
+github.com/ooni/probe-engine/atomicx
+github.com/ooni/probe-engine/bouncer
+github.com/ooni/probe-engine/collector
+github.com/ooni/probe-engine/experiment/dash
+github.com/ooni/probe-engine/experiment/example
+github.com/ooni/probe-engine/experiment/fbmessenger
+github.com/ooni/probe-engine/experiment/handler
+github.com/ooni/probe-engine/experiment/hhfm
+github.com/ooni/probe-engine/experiment/hirl
+github.com/ooni/probe-engine/experiment/httpheader
+github.com/ooni/probe-engine/experiment/mkevent
+github.com/ooni/probe-engine/experiment/mkhelper
+github.com/ooni/probe-engine/experiment/mkrunner
+github.com/ooni/probe-engine/experiment/ndt7
+github.com/ooni/probe-engine/experiment/psiphon
+github.com/ooni/probe-engine/experiment/sniblocking
+github.com/ooni/probe-engine/experiment/telegram
+github.com/ooni/probe-engine/experiment/tor
+github.com/ooni/probe-engine/experiment/urlgetter
+github.com/ooni/probe-engine/experiment/web_connectivity
+github.com/ooni/probe-engine/experiment/whatsapp
+github.com/ooni/probe-engine/geoiplookup/iplookup
+github.com/ooni/probe-engine/geoiplookup/iplookup/avast
+github.com/ooni/probe-engine/geoiplookup/iplookup/ubuntu
+github.com/ooni/probe-engine/geoiplookup/mmdblookup
+github.com/ooni/probe-engine/geoiplookup/resolverlookup
+github.com/ooni/probe-engine/internal/fetch
+github.com/ooni/probe-engine/internal/humanizex
+github.com/ooni/probe-engine/internal/jsonapi
+github.com/ooni/probe-engine/internal/kvstore
+github.com/ooni/probe-engine/internal/mlablocate
+github.com/ooni/probe-engine/internal/netxlogger
+github.com/ooni/probe-engine/internal/oonidatamodel
+github.com/ooni/probe-engine/internal/oonitemplates
+github.com/ooni/probe-engine/internal/orchestra
+github.com/ooni/probe-engine/internal/orchestra/login
+github.com/ooni/probe-engine/internal/orchestra/metadata
+github.com/ooni/probe-engine/internal/orchestra/register
+github.com/ooni/probe-engine/internal/orchestra/statefile
+github.com/ooni/probe-engine/internal/orchestra/testlists/psiphon
+github.com/ooni/probe-engine/internal/orchestra/testlists/tor
+github.com/ooni/probe-engine/internal/orchestra/testlists/urls
+github.com/ooni/probe-engine/internal/orchestra/update
+github.com/ooni/probe-engine/internal/platform
+github.com/ooni/probe-engine/internal/psiphonx
+github.com/ooni/probe-engine/internal/resources
+github.com/ooni/probe-engine/internal/runtimex
+github.com/ooni/probe-engine/internal/tlsx
+github.com/ooni/probe-engine/internal/urlpath
+github.com/ooni/probe-engine/libminiooni
+github.com/ooni/probe-engine/measurementkit
+github.com/ooni/probe-engine/measurementkit/mkcgo
+github.com/ooni/probe-engine/model
+github.com/ooni/probe-engine/netx
+github.com/ooni/probe-engine/netx/archival
+github.com/ooni/probe-engine/netx/bytecounter
+github.com/ooni/probe-engine/netx/dialer
+github.com/ooni/probe-engine/netx/handlers
+github.com/ooni/probe-engine/netx/httptransport
+github.com/ooni/probe-engine/netx/internal/connid
+github.com/ooni/probe-engine/netx/internal/dialid
+github.com/ooni/probe-engine/netx/internal/errwrapper
+github.com/ooni/probe-engine/netx/internal/transactionid
+github.com/ooni/probe-engine/netx/modelx
+github.com/ooni/probe-engine/netx/oldhttptransport
+github.com/ooni/probe-engine/netx/resolver
+github.com/ooni/probe-engine/netx/trace
+github.com/ooni/probe-engine/version
+# github.com/oschwald/geoip2-golang v1.4.0
+github.com/oschwald/geoip2-golang
+# github.com/oschwald/maxminddb-golang v1.6.0
+github.com/oschwald/maxminddb-golang
+# github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3
+github.com/pborman/getopt/v2
+# github.com/pkg/errors v0.9.1
+github.com/pkg/errors
+# github.com/redjack/marionette v0.0.0-20180818172807-360dd8f58226
+github.com/redjack/marionette
+github.com/redjack/marionette/ecb
+github.com/redjack/marionette/fte
+github.com/redjack/marionette/mar
+github.com/redjack/marionette/plugins
+github.com/redjack/marionette/plugins/channel
+github.com/redjack/marionette/plugins/fte
+github.com/redjack/marionette/plugins/io
+github.com/redjack/marionette/plugins/model
+github.com/redjack/marionette/plugins/tg
+github.com/redjack/marionette/regex2dfa
+# github.com/refraction-networking/gotapdance v0.0.0-20190909202946-3a6e1938ad70
+github.com/refraction-networking/gotapdance/protobuf
+github.com/refraction-networking/gotapdance/tapdance
+# github.com/refraction-networking/utls v0.0.0-20190909200633-43c36d3c1f57
+github.com/refraction-networking/utls
+github.com/refraction-networking/utls/cpu
+# github.com/rogpeppe/go-internal v1.5.2
+github.com/rogpeppe/go-internal/internal/syscall/windows
+github.com/rogpeppe/go-internal/internal/syscall/windows/sysdll
+github.com/rogpeppe/go-internal/lockedfile
+github.com/rogpeppe/go-internal/lockedfile/internal/filelock
+# github.com/sergeyfrolov/bsbuffer v0.0.0-20180903213811-94e85abb8507
+github.com/sergeyfrolov/bsbuffer
+# github.com/sirupsen/logrus v1.4.2
+github.com/sirupsen/logrus
+# github.com/syndtr/gocapability v0.0.0-20170704070218-db04d3cc01c8
+github.com/syndtr/gocapability/capability
+# github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea
+github.com/zach-klippenstein/goregen
+# gitlab.com/yawning/obfs4.git v0.0.0-20200410113629-2d8f3c8bbfd7
+gitlab.com/yawning/obfs4.git/common/csrand
+gitlab.com/yawning/obfs4.git/common/drbg
+gitlab.com/yawning/obfs4.git/common/log
+gitlab.com/yawning/obfs4.git/common/ntor
+gitlab.com/yawning/obfs4.git/common/probdist
+gitlab.com/yawning/obfs4.git/common/replayfilter
+gitlab.com/yawning/obfs4.git/common/uniformdh
+gitlab.com/yawning/obfs4.git/internal/edwards25519
+gitlab.com/yawning/obfs4.git/internal/extra25519
+gitlab.com/yawning/obfs4.git/transports
+gitlab.com/yawning/obfs4.git/transports/base
+gitlab.com/yawning/obfs4.git/transports/meeklite
+gitlab.com/yawning/obfs4.git/transports/obfs2
+gitlab.com/yawning/obfs4.git/transports/obfs3
+gitlab.com/yawning/obfs4.git/transports/obfs4
+gitlab.com/yawning/obfs4.git/transports/obfs4/framing
+gitlab.com/yawning/obfs4.git/transports/scramblesuit
+# gitlab.com/yawning/utls.git v0.0.11-1
+gitlab.com/yawning/utls.git
+gitlab.com/yawning/utls.git/cpu
+# go.uber.org/atomic v1.3.3-0.20180806045314-ca680462431f
+go.uber.org/atomic
+# go.uber.org/multierr v1.1.1-0.20180122172545-ddea229ff1df
+go.uber.org/multierr
+# go.uber.org/zap v1.9.2-0.20180814183419-67bc79d13d15
+go.uber.org/zap
+go.uber.org/zap/buffer
+go.uber.org/zap/internal/bufferpool
+go.uber.org/zap/internal/color
+go.uber.org/zap/internal/exit
+go.uber.org/zap/zapcore
+# golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d
+golang.org/x/crypto/blake2b
+golang.org/x/crypto/chacha20
+golang.org/x/crypto/chacha20poly1305
+golang.org/x/crypto/cryptobyte
+golang.org/x/crypto/cryptobyte/asn1
+golang.org/x/crypto/curve25519
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
+golang.org/x/crypto/hkdf
+golang.org/x/crypto/internal/subtle
+golang.org/x/crypto/nacl/box
+golang.org/x/crypto/nacl/secretbox
+golang.org/x/crypto/poly1305
+golang.org/x/crypto/salsa20/salsa
+golang.org/x/crypto/sha3
+# golang.org/x/net v0.0.0-20200421231249-e086a090c8fd
+golang.org/x/net/bpf
+golang.org/x/net/context
+golang.org/x/net/http/httpguts
+golang.org/x/net/http2
+golang.org/x/net/http2/hpack
+golang.org/x/net/idna
+golang.org/x/net/internal/iana
+golang.org/x/net/internal/socket
+golang.org/x/net/internal/socks
+golang.org/x/net/internal/timeseries
+golang.org/x/net/ipv4
+golang.org/x/net/ipv6
+golang.org/x/net/proxy
+golang.org/x/net/trace
+# golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd
+golang.org/x/sys/cpu
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/text v0.3.2
+golang.org/x/text/secure/bidirule
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
