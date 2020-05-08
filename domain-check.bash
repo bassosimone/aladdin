@@ -53,10 +53,10 @@ EOF
   exit 1
 }
 
-[ $# -eq 1 ] || usage_then_die
-[ -f $acceptance_file ] || disclaimer_then_die
+inputCount=$#
 
-domain=$1
+[ $inputCount -ge 1 ] || usage_then_die
+[ -f $acceptance_file ] || disclaimer_then_die
 
 function log() {
   echo "$@" 1>&2
@@ -114,166 +114,180 @@ log -n "building the latest version of miniooni (may take long time!)... "
 must run go build -tags nomk ./cmd/aladdin
 log "done"
 
-log -n "generating UUID to correlate measurements... "
-uuid=$(uuidgen)
-log "$uuid"
+function main() {
+  domain=$1
 
-doh_cache="-ODNSCache=dns.google 8.8.8.8 8.8.4.4"
-doh_url="-OResolverURL=doh://google"
-log "options used to enable alternative resolver: \"$doh_cache\" $doh_url"
+  log -n "generating UUID to correlate measurements... "
+  uuid=$(uuidgen)
+  log "$uuid"
 
-checking "for test helper to use"
-test_helper=${MINIOONI_TEST_HELPER:-example.org}
-log "$test_helper"
+  doh_cache="-ODNSCache=dns.google 8.8.8.8 8.8.4.4"
+  doh_url="-OResolverURL=doh://google"
+  log "options used to enable alternative resolver: \"$doh_cache\" $doh_url"
 
-checking "for extra options to pass to miniooni"
-extra_options=${MINIOONI_EXTRA_OPTIONS}
-log "$extra_options"
+  checking "for test helper to use"
+  test_helper=${MINIOONI_TEST_HELPER:-example.org}
+  log "$test_helper"
 
-function urlgetter() {
-  run ./aladdin -v $extra_options -Asession=$uuid "$@" urlgetter
+  checking "for extra options to pass to miniooni"
+  extra_options=${MINIOONI_EXTRA_OPTIONS}
+  log "$extra_options"
+
+  function urlgetter() {
+    run ./aladdin -v $extra_options -Asession=$uuid "$@" urlgetter
+  }
+
+  function getipv4first() {
+    tail -n1 $report_file|jq -r ".test_keys.queries|.[]|select(.hostname==\"$1\")|select(.query_type==\"A\")|.answers|.[0].ipv4"
+  }
+
+  log -n "getting $test_helper's IP address using alternative resolver... "
+  urlgetter -Astep=resolve_test_helper_ip \
+            "$doh_cache" \
+            $doh_url \
+            -idnslookup://$test_helper
+  test_helper_ip=$(getipv4first $test_helper)
+  { [ "$test_helper_ip" != "" ] && log "$test_helper_ip"; } || fatal_with_logs "failure"
+
+  function getfailure() {
+    tail -n1 $report_file|jq -r .test_keys.failure
+  }
+
+  function maybe() {
+    log "maybe (check $report_file)"
+  }
+
+  checking "for SNI-triggered blocking"
+  urlgetter -Astep=sni_blocking \
+            -OTLSServerName=$domain \
+            -itlshandshake://$test_helper_ip:443
+  { [ "$(getfailure)" = "ssl_invalid_hostname" ] && log "no"; } || maybe
+
+  checking "for host-header-triggered blocking"
+  urlgetter -Astep=host_header_blocking \
+            -OHTTPHost=$domain \
+            -ONoFollowRedirects=true \
+            -ihttp://$test_helper_ip
+  { [ "$(getfailure)" = "null" ] && log "no"; } || maybe
+
+  checking "for DNS injection"
+  urlgetter -Astep=dns_injection \
+            -OResolverURL=udp://$test_helper_ip:53 \
+            -idnslookup://$domain
+  { [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
+
+  checking "whether the system resolver returns bogons"
+  urlgetter -Astep=bogons \
+            -ORejectDNSBogons=true \
+            -idnslookup://$domain
+  { [ "$(getfailure)" = "dns_bogon_error" ] && log "yes"; } || log "no"
+
+  function getipv4list() {
+    echo $(tail -n1 $report_file|jq -r ".test_keys.queries|.[]|select(.hostname==\"$1\")|select(.query_type==\"A\")|.answers|.[].ipv4"|sort)
+  }
+
+  checking "for IPv4 addresses returned by the system resolver"
+  # Implementation note: with dns_bogons_error we still have the IP addresses
+  # available inside the response, so we can read then
+  ipv4_system_list=$(mktemp ./aladdin.XXXXXX)
+  getipv4list $domain > $ipv4_system_list
+  log $(cat $ipv4_system_list)
+
+  checking "for IPv4 addresses returned by the alternate resolver"
+  urlgetter -Astep=doh_lookup \
+            "$doh_cache" \
+            $doh_url \
+            -idnslookup://$domain
+  ipv4_doh_list=$(mktemp ./aladdin.XXXXXX)
+  getipv4list $domain > $ipv4_doh_list
+  log $(cat $ipv4_doh_list)
+
+  checking "for DNS consistency between system and alternate resolver"
+  ipv4_overlap_list=$(comm -12 $ipv4_system_list $ipv4_doh_list)
+  { [ "$ipv4_overlap_list" != "" ] && log "yes"; } || log "no"
+
+  function getcertificatefile() {
+    local filename=$(mktemp ./aladdin.XXXXXX)
+    tail -n1 report.jsonl|jq -r '.test_keys.tls_handshakes|.[]|.peer_certificates|.[0]|.data'|base64 -d > $filename
+    echo $filename
+  }
+
+  function printcertificate() {
+    local certfile
+    certfile=$(getcertificatefile)
+    checking "for x509 certificate issuer"
+    log $(openssl x509 -inform der -in $certfile -noout -issuer 2>/dev/null|head -n1|sed 's/^issuer=\ *//g')
+    checking "for x509 certificate subject"
+    log $(openssl x509 -inform der -in $certfile -noout -subject 2>/dev/null|head -n1|sed 's/^subject=\ *//g')
+    checking "for x509 certificate notBefore"
+    log $(openssl x509 -inform der -in $certfile -noout -dates 2>/dev/null|head -n1|sed 's/^notBefore=//g')
+    checking "for x509 certificate notAfter"
+    log $(openssl x509 -inform der -in $certfile -noout -dates 2>/dev/null|sed -n 2p|sed 's/^notAfter=//g')
+    checking "for x509 certificate SHA1 fingerprint"
+    log $(openssl x509 -inform der -in $certfile -noout -fingerprint 2>/dev/null|head -n1|sed 's/^SHA1 Fingerprint=//g')
+  }
+
+  function getbodyfile() {
+    # Implementation note: requests stored in LIFO order
+    local filename=$(mktemp ./aladdin.XXXXXX)
+    tail -n1 $report_file|jq -r ".test_keys.requests|.[0]|.response.body" > $filename
+    echo $filename
+  }
+
+  checking "whether the system resolver lied to us"
+  urlgetter -Astep=system_resolver_validation \
+            "-ODNSCache=$domain $(cat $ipv4_system_list)" \
+            -ihttps://$domain/
+  vanilla_failure=$(getfailure)
+  { [ "$vanilla_failure" = "null" ] && log "no"; } || maybe
+  printcertificate
+  body_vanilla=$(getbodyfile)
+  log "webpage body available at... $body_vanilla"
+
+  function diffbodyfile() {
+    local filename=$(mktemp ./aladdin.XXXXXX)
+    diff -u $1 $2 > $filename
+    echo $filename
+  }
+
+  checking "whether we obtain the same body using psiphon"
+  urlgetter -Astep=psiphon -OTunnel=psiphon -ihttps://$domain
+  body_tunnel=$(getbodyfile)
+  body_diff=$(diffbodyfile $body_vanilla $body_tunnel)
+  { [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
+
+  checking "whether we can retrieve a webpage by removing TLS validation"
+  urlgetter -Astep=https_blockpage_fetch \
+            "-ODNSCache=$domain $(cat $ipv4_system_list)" \
+            -ONoTLSVerify=true \
+            -ihttps://$domain/
+  { [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
+  printcertificate
+  body_noverify=$(getbodyfile)
+  log "webpage body available at... $body_noverify"
+  checking "whether we obtain the same body using psiphon"
+  body_diff=$(diffbodyfile $body_noverify $body_tunnel)
+  { [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
+
+  checking "whether we can retrieve a webpage using the alternate resolver"
+  urlgetter -Astep=doh_resolver_validation \
+            "-ODNSCache=$domain $(cat $ipv4_doh_list)" \
+            -ihttps://$domain/
+  { [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
+  printcertificate
+  body_doh=$(getbodyfile)
+  log "webpage body available at... $body_doh"
+  checking "whether we obtain the same body using psiphon"
+  body_diff=$(diffbodyfile $body_doh $body_tunnel)
+  { [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
 }
 
-function getipv4first() {
-  tail -n1 $report_file|jq -r ".test_keys.queries|.[]|select(.hostname==\"$1\")|select(.query_type==\"A\")|.answers|.[0].ipv4"
-}
-
-log -n "getting $test_helper's IP address using alternative resolver... "
-urlgetter -Astep=resolve_test_helper_ip \
-          "$doh_cache" \
-          $doh_url \
-          -idnslookup://$test_helper
-test_helper_ip=$(getipv4first $test_helper)
-{ [ "$test_helper_ip" != "" ] && log "$test_helper_ip"; } || fatal_with_logs "failure"
-
-function getfailure() {
-  tail -n1 $report_file|jq -r .test_keys.failure
-}
-
-function maybe() {
-  log "maybe (check $report_file)"
-}
-
-checking "for SNI-triggered blocking"
-urlgetter -Astep=sni_blocking \
-          -OTLSServerName=$domain \
-          -itlshandshake://$test_helper_ip:443
-{ [ "$(getfailure)" = "ssl_invalid_hostname" ] && log "no"; } || maybe
-
-checking "for host-header-triggered blocking"
-urlgetter -Astep=host_header_blocking \
-          -OHTTPHost=$domain \
-          -ONoFollowRedirects=true \
-          -ihttp://$test_helper_ip
-{ [ "$(getfailure)" = "null" ] && log "no"; } || maybe
-
-checking "for DNS injection"
-urlgetter -Astep=dns_injection \
-          -OResolverURL=udp://$test_helper_ip:53 \
-          -idnslookup://$domain
-{ [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
-
-checking "whether the system resolver returns bogons"
-urlgetter -Astep=bogons \
-          -ORejectDNSBogons=true \
-          -idnslookup://$domain
-{ [ "$(getfailure)" = "dns_bogon_error" ] && log "yes"; } || log "no"
-
-function getipv4list() {
-  echo $(tail -n1 $report_file|jq -r ".test_keys.queries|.[]|select(.hostname==\"$1\")|select(.query_type==\"A\")|.answers|.[].ipv4"|sort)
-}
-
-checking "for IPv4 addresses returned by the system resolver"
-# Implementation note: with dns_bogons_error we still have the IP addresses
-# available inside the response, so we can read then
-ipv4_system_list=$(mktemp ./aladdin.XXXXXX)
-getipv4list $domain > $ipv4_system_list
-log $(cat $ipv4_system_list)
-
-checking "for IPv4 addresses returned by the alternate resolver"
-urlgetter -Astep=doh_lookup \
-          "$doh_cache" \
-          $doh_url \
-          -idnslookup://$domain
-ipv4_doh_list=$(mktemp ./aladdin.XXXXXX)
-getipv4list $domain > $ipv4_doh_list
-log $(cat $ipv4_doh_list)
-
-checking "for DNS consistency between system and alternate resolver"
-ipv4_overlap_list=$(comm -12 $ipv4_system_list $ipv4_doh_list)
-{ [ "$ipv4_overlap_list" != "" ] && log "yes"; } || log "no"
-
-function getcertificatefile() {
-  local filename=$(mktemp ./aladdin.XXXXXX)
-  tail -n1 report.jsonl|jq -r '.test_keys.tls_handshakes|.[]|.peer_certificates|.[0]|.data'|base64 -d > $filename
-  echo $filename
-}
-
-function printcertificate() {
-  local certfile
-  certfile=$(getcertificatefile)
-  checking "for x509 certificate issuer"
-  log $(openssl x509 -inform der -in $certfile -noout -issuer 2>/dev/null|head -n1|sed 's/^issuer=\ *//g')
-  checking "for x509 certificate subject"
-  log $(openssl x509 -inform der -in $certfile -noout -subject 2>/dev/null|head -n1|sed 's/^subject=\ *//g')
-  checking "for x509 certificate notBefore"
-  log $(openssl x509 -inform der -in $certfile -noout -dates 2>/dev/null|head -n1|sed 's/^notBefore=//g')
-  checking "for x509 certificate notAfter"
-  log $(openssl x509 -inform der -in $certfile -noout -dates 2>/dev/null|sed -n 2p|sed 's/^notAfter=//g')
-  checking "for x509 certificate SHA1 fingerprint"
-  log $(openssl x509 -inform der -in $certfile -noout -fingerprint 2>/dev/null|head -n1|sed 's/^SHA1 Fingerprint=//g')
-}
-
-function getbodyfile() {
-  # Implementation note: requests stored in LIFO order
-  local filename=$(mktemp ./aladdin.XXXXXX)
-  tail -n1 $report_file|jq -r ".test_keys.requests|.[0]|.response.body" > $filename
-  echo $filename
-}
-
-checking "whether the system resolver lied to us"
-urlgetter -Astep=system_resolver_validation \
-          "-ODNSCache=$domain $(cat $ipv4_system_list)" \
-          -ihttps://$domain/
-vanilla_failure=$(getfailure)
-{ [ "$vanilla_failure" = "null" ] && log "no"; } || maybe
-printcertificate
-body_vanilla=$(getbodyfile)
-log "webpage body available at... $body_vanilla"
-
-function diffbodyfile() {
-  local filename=$(mktemp ./aladdin.XXXXXX)
-  diff -u $1 $2 > $filename
-  echo $filename
-}
-
-checking "whether we obtain the same body using psiphon"
-urlgetter -Astep=psiphon -OTunnel=psiphon -ihttps://$domain
-body_tunnel=$(getbodyfile)
-body_diff=$(diffbodyfile $body_vanilla $body_tunnel)
-{ [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
-
-checking "whether we can retrieve a webpage by removing TLS validation"
-urlgetter -Astep=https_blockpage_fetch \
-          "-ODNSCache=$domain $(cat $ipv4_system_list)" \
-          -ONoTLSVerify=true \
-          -ihttps://$domain/
-{ [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
-printcertificate
-body_noverify=$(getbodyfile)
-log "webpage body available at... $body_noverify"
-checking "whether we obtain the same body using psiphon"
-body_diff=$(diffbodyfile $body_noverify $body_tunnel)
-{ [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
-
-checking "whether we can retrieve a webpage using the alternate resolver"
-urlgetter -Astep=doh_resolver_validation \
-          "-ODNSCache=$domain $(cat $ipv4_doh_list)" \
-          -ihttps://$domain/
-{ [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
-printcertificate
-body_doh=$(getbodyfile)
-log "webpage body available at... $body_doh"
-checking "whether we obtain the same body using psiphon"
-body_diff=$(diffbodyfile $body_doh $body_tunnel)
-{ [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
+inputCounter=0
+while [[ $1 != "" ]]; do
+  ((inputCounter++))
+  log "[$inputCounter/$inputCount] running with input: $1"
+  main $1 &
+  wait
+  sleep 1
+  shift
+done
