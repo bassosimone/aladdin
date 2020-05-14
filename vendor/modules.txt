@@ -8,6 +8,8 @@ git.schwanenlied.me/yawning/bsaes.git/internal/modes
 git.torproject.org/pluggable-transports/goptlib.git
 # github.com/AndreasBriese/bbloom v0.0.0-20170702084017-28f7e881ca57
 github.com/AndreasBriese/bbloom
+# github.com/BurntSushi/toml v0.3.1
+github.com/BurntSushi/toml
 # github.com/Psiphon-Labs/bolt v0.0.0-20200203172706-f3d58e369264
 github.com/Psiphon-Labs/bolt
 # github.com/Psiphon-Labs/chacha20 v0.2.1-0.20200128191310-899a4be52863
@@ -93,12 +95,21 @@ github.com/armon/go-socks5
 # github.com/bifurcation/mint v0.0.0-20180306135233-198357931e61
 github.com/bifurcation/mint
 github.com/bifurcation/mint/syntax
+# github.com/certifi/gocertifi v0.0.0-20200211180108-c7c1fbc02894
+github.com/certifi/gocertifi
 # github.com/cheekybits/genny v1.0.0
 github.com/cheekybits/genny/generic
 # github.com/cognusion/go-cache-lru v0.0.0-20170419142635-f73e2280ecea
 github.com/cognusion/go-cache-lru
 # github.com/creack/goselect v0.1.1
 github.com/creack/goselect
+# github.com/cretz/bine v0.1.0
+github.com/cretz/bine/control
+github.com/cretz/bine/process
+github.com/cretz/bine/tor
+github.com/cretz/bine/torutil
+github.com/cretz/bine/torutil/ed25519
+github.com/cretz/bine/torutil/ed25519/internal/edwards25519
 # github.com/dchest/siphash v1.2.1
 github.com/dchest/siphash
 # github.com/dgraph-io/badger v1.5.4-0.20180815194500-3a87f6d9c273
@@ -120,14 +131,15 @@ github.com/golang/protobuf/proto
 github.com/gorilla/websocket
 # github.com/grafov/m3u8 v0.0.0-20171211212457-6ab8f28ed427
 github.com/grafov/m3u8
-# github.com/hashicorp/golang-lru v0.5.1
+# github.com/hashicorp/golang-lru v0.5.4
 github.com/hashicorp/golang-lru
 github.com/hashicorp/golang-lru/simplelru
 # github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 github.com/iancoleman/strcase
 # github.com/juju/ratelimit v1.0.2-0.20191002062651-f60b32039441
 github.com/juju/ratelimit
-# github.com/konsorten/go-windows-terminal-sequences v1.0.1
+# github.com/konsorten/go-windows-terminal-sequences v1.0.2
+## explicit
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/m-lab/ndt-server v0.13.4
 github.com/m-lab/ndt-server/metadata
@@ -144,7 +156,7 @@ github.com/marten-seemann/qtls
 github.com/miekg/dns
 # github.com/montanaflynn/stats v0.6.3
 github.com/montanaflynn/stats
-# github.com/ooni/probe-engine v0.10.1-0.20200504210010-52df3cf408db
+# github.com/ooni/probe-engine v0.11.0
 ## explicit
 github.com/ooni/probe-engine
 github.com/ooni/probe-engine/atomicx
@@ -156,7 +168,6 @@ github.com/ooni/probe-engine/experiment/fbmessenger
 github.com/ooni/probe-engine/experiment/handler
 github.com/ooni/probe-engine/experiment/hhfm
 github.com/ooni/probe-engine/experiment/hirl
-github.com/ooni/probe-engine/experiment/httpheader
 github.com/ooni/probe-engine/experiment/mkevent
 github.com/ooni/probe-engine/experiment/mkhelper
 github.com/ooni/probe-engine/experiment/mkrunner
@@ -174,10 +185,12 @@ github.com/ooni/probe-engine/geoiplookup/iplookup/ubuntu
 github.com/ooni/probe-engine/geoiplookup/mmdblookup
 github.com/ooni/probe-engine/geoiplookup/resolverlookup
 github.com/ooni/probe-engine/internal/fetch
+github.com/ooni/probe-engine/internal/httpheader
 github.com/ooni/probe-engine/internal/humanizex
 github.com/ooni/probe-engine/internal/jsonapi
 github.com/ooni/probe-engine/internal/kvstore
 github.com/ooni/probe-engine/internal/mlablocate
+github.com/ooni/probe-engine/internal/mlablocatev2
 github.com/ooni/probe-engine/internal/netxlogger
 github.com/ooni/probe-engine/internal/oonidatamodel
 github.com/ooni/probe-engine/internal/oonitemplates
@@ -194,7 +207,9 @@ github.com/ooni/probe-engine/internal/platform
 github.com/ooni/probe-engine/internal/psiphonx
 github.com/ooni/probe-engine/internal/resources
 github.com/ooni/probe-engine/internal/runtimex
+github.com/ooni/probe-engine/internal/sessiontunnel
 github.com/ooni/probe-engine/internal/tlsx
+github.com/ooni/probe-engine/internal/torx
 github.com/ooni/probe-engine/internal/urlpath
 github.com/ooni/probe-engine/libminiooni
 github.com/ooni/probe-engine/measurementkit
@@ -241,7 +256,7 @@ github.com/refraction-networking/gotapdance/tapdance
 # github.com/refraction-networking/utls v0.0.0-20190909200633-43c36d3c1f57
 github.com/refraction-networking/utls
 github.com/refraction-networking/utls/cpu
-# github.com/rogpeppe/go-internal v1.5.2
+# github.com/rogpeppe/go-internal v1.6.0
 github.com/rogpeppe/go-internal/internal/syscall/windows
 github.com/rogpeppe/go-internal/internal/syscall/windows/sysdll
 github.com/rogpeppe/go-internal/lockedfile
@@ -275,18 +290,21 @@ gitlab.com/yawning/obfs4.git/transports/scramblesuit
 # gitlab.com/yawning/utls.git v0.0.11-1
 gitlab.com/yawning/utls.git
 gitlab.com/yawning/utls.git/cpu
-# go.uber.org/atomic v1.3.3-0.20180806045314-ca680462431f
+# go.uber.org/atomic v1.5.0
 go.uber.org/atomic
-# go.uber.org/multierr v1.1.1-0.20180122172545-ddea229ff1df
+# go.uber.org/multierr v1.3.0
 go.uber.org/multierr
-# go.uber.org/zap v1.9.2-0.20180814183419-67bc79d13d15
+# go.uber.org/tools v0.0.0-20190618225709-2cfd321de3ee
+go.uber.org/tools/update-license
+# go.uber.org/zap v1.13.0
+## explicit
 go.uber.org/zap
 go.uber.org/zap/buffer
 go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
-# golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d
+# golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/chacha20
 golang.org/x/crypto/chacha20poly1305
@@ -302,7 +320,10 @@ golang.org/x/crypto/nacl/secretbox
 golang.org/x/crypto/poly1305
 golang.org/x/crypto/salsa20/salsa
 golang.org/x/crypto/sha3
-# golang.org/x/net v0.0.0-20200421231249-e086a090c8fd
+# golang.org/x/lint v0.0.0-20190930215403-16217165b5de
+golang.org/x/lint
+golang.org/x/lint/golint
+# golang.org/x/net v0.0.0-20200513185701-a91f0712d120
 golang.org/x/net/bpf
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
@@ -317,8 +338,9 @@ golang.org/x/net/ipv4
 golang.org/x/net/ipv6
 golang.org/x/net/proxy
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd
+# golang.org/x/sys v0.0.0-20200513112337-417ce2331b5c
 golang.org/x/sys/cpu
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/text v0.3.2
@@ -326,3 +348,42 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
+# golang.org/x/tools v0.0.0-20200221224223-e1da425f72fd
+golang.org/x/tools/go/analysis
+golang.org/x/tools/go/analysis/passes/inspect
+golang.org/x/tools/go/ast/astutil
+golang.org/x/tools/go/ast/inspector
+golang.org/x/tools/go/buildutil
+golang.org/x/tools/go/gcexportdata
+golang.org/x/tools/go/internal/gcimporter
+golang.org/x/tools/go/internal/packagesdriver
+golang.org/x/tools/go/packages
+golang.org/x/tools/go/types/objectpath
+golang.org/x/tools/go/types/typeutil
+golang.org/x/tools/internal/packagesinternal
+# honnef.co/go/tools v0.0.1-2019.2.3
+honnef.co/go/tools/arg
+honnef.co/go/tools/cmd/staticcheck
+honnef.co/go/tools/config
+honnef.co/go/tools/deprecated
+honnef.co/go/tools/facts
+honnef.co/go/tools/functions
+honnef.co/go/tools/go/types/typeutil
+honnef.co/go/tools/internal/cache
+honnef.co/go/tools/internal/passes/buildssa
+honnef.co/go/tools/internal/renameio
+honnef.co/go/tools/internal/sharedcheck
+honnef.co/go/tools/lint
+honnef.co/go/tools/lint/lintdsl
+honnef.co/go/tools/lint/lintutil
+honnef.co/go/tools/lint/lintutil/format
+honnef.co/go/tools/loader
+honnef.co/go/tools/printf
+honnef.co/go/tools/simple
+honnef.co/go/tools/ssa
+honnef.co/go/tools/ssautil
+honnef.co/go/tools/staticcheck
+honnef.co/go/tools/staticcheck/vrp
+honnef.co/go/tools/stylecheck
+honnef.co/go/tools/unused
+honnef.co/go/tools/version
