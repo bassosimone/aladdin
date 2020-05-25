@@ -8,8 +8,6 @@ git.schwanenlied.me/yawning/bsaes.git/internal/modes
 git.torproject.org/pluggable-transports/goptlib.git
 # github.com/AndreasBriese/bbloom v0.0.0-20170702084017-28f7e881ca57
 github.com/AndreasBriese/bbloom
-# github.com/BurntSushi/toml v0.3.1
-github.com/BurntSushi/toml
 # github.com/Psiphon-Labs/bolt v0.0.0-20200203172706-f3d58e369264
 github.com/Psiphon-Labs/bolt
 # github.com/Psiphon-Labs/chacha20 v0.2.1-0.20200128191310-899a4be52863
@@ -138,8 +136,7 @@ github.com/hashicorp/golang-lru/simplelru
 github.com/iancoleman/strcase
 # github.com/juju/ratelimit v1.0.2-0.20191002062651-f60b32039441
 github.com/juju/ratelimit
-# github.com/konsorten/go-windows-terminal-sequences v1.0.2
-## explicit
+# github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/m-lab/ndt-server v0.13.4
 github.com/m-lab/ndt-server/metadata
@@ -156,12 +153,10 @@ github.com/marten-seemann/qtls
 github.com/miekg/dns
 # github.com/montanaflynn/stats v0.6.3
 github.com/montanaflynn/stats
-# github.com/ooni/probe-engine v0.11.0
+# github.com/ooni/probe-engine v0.11.1-0.20200522123417-8dd946a956f2
 ## explicit
 github.com/ooni/probe-engine
 github.com/ooni/probe-engine/atomicx
-github.com/ooni/probe-engine/bouncer
-github.com/ooni/probe-engine/collector
 github.com/ooni/probe-engine/experiment/dash
 github.com/ooni/probe-engine/experiment/example
 github.com/ooni/probe-engine/experiment/fbmessenger
@@ -207,6 +202,7 @@ github.com/ooni/probe-engine/internal/platform
 github.com/ooni/probe-engine/internal/psiphonx
 github.com/ooni/probe-engine/internal/resources
 github.com/ooni/probe-engine/internal/runtimex
+github.com/ooni/probe-engine/internal/sessionresolver
 github.com/ooni/probe-engine/internal/sessiontunnel
 github.com/ooni/probe-engine/internal/tlsx
 github.com/ooni/probe-engine/internal/torx
@@ -228,7 +224,9 @@ github.com/ooni/probe-engine/netx/internal/transactionid
 github.com/ooni/probe-engine/netx/modelx
 github.com/ooni/probe-engine/netx/oldhttptransport
 github.com/ooni/probe-engine/netx/resolver
+github.com/ooni/probe-engine/netx/selfcensor
 github.com/ooni/probe-engine/netx/trace
+github.com/ooni/probe-engine/probeservices
 github.com/ooni/probe-engine/version
 # github.com/oschwald/geoip2-golang v1.4.0
 github.com/oschwald/geoip2-golang
@@ -290,14 +288,11 @@ gitlab.com/yawning/obfs4.git/transports/scramblesuit
 # gitlab.com/yawning/utls.git v0.0.11-1
 gitlab.com/yawning/utls.git
 gitlab.com/yawning/utls.git/cpu
-# go.uber.org/atomic v1.5.0
+# go.uber.org/atomic v1.3.3-0.20180806045314-ca680462431f
 go.uber.org/atomic
-# go.uber.org/multierr v1.3.0
+# go.uber.org/multierr v1.1.1-0.20180122172545-ddea229ff1df
 go.uber.org/multierr
-# go.uber.org/tools v0.0.0-20190618225709-2cfd321de3ee
-go.uber.org/tools/update-license
-# go.uber.org/zap v1.13.0
-## explicit
+# go.uber.org/zap v1.9.2-0.20180814183419-67bc79d13d15
 go.uber.org/zap
 go.uber.org/zap/buffer
 go.uber.org/zap/internal/bufferpool
@@ -320,9 +315,6 @@ golang.org/x/crypto/nacl/secretbox
 golang.org/x/crypto/poly1305
 golang.org/x/crypto/salsa20/salsa
 golang.org/x/crypto/sha3
-# golang.org/x/lint v0.0.0-20190930215403-16217165b5de
-golang.org/x/lint
-golang.org/x/lint/golint
 # golang.org/x/net v0.0.0-20200513185701-a91f0712d120
 golang.org/x/net/bpf
 golang.org/x/net/context
@@ -348,42 +340,3 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# golang.org/x/tools v0.0.0-20200221224223-e1da425f72fd
-golang.org/x/tools/go/analysis
-golang.org/x/tools/go/analysis/passes/inspect
-golang.org/x/tools/go/ast/astutil
-golang.org/x/tools/go/ast/inspector
-golang.org/x/tools/go/buildutil
-golang.org/x/tools/go/gcexportdata
-golang.org/x/tools/go/internal/gcimporter
-golang.org/x/tools/go/internal/packagesdriver
-golang.org/x/tools/go/packages
-golang.org/x/tools/go/types/objectpath
-golang.org/x/tools/go/types/typeutil
-golang.org/x/tools/internal/packagesinternal
-# honnef.co/go/tools v0.0.1-2019.2.3
-honnef.co/go/tools/arg
-honnef.co/go/tools/cmd/staticcheck
-honnef.co/go/tools/config
-honnef.co/go/tools/deprecated
-honnef.co/go/tools/facts
-honnef.co/go/tools/functions
-honnef.co/go/tools/go/types/typeutil
-honnef.co/go/tools/internal/cache
-honnef.co/go/tools/internal/passes/buildssa
-honnef.co/go/tools/internal/renameio
-honnef.co/go/tools/internal/sharedcheck
-honnef.co/go/tools/lint
-honnef.co/go/tools/lint/lintdsl
-honnef.co/go/tools/lint/lintutil
-honnef.co/go/tools/lint/lintutil/format
-honnef.co/go/tools/loader
-honnef.co/go/tools/printf
-honnef.co/go/tools/simple
-honnef.co/go/tools/ssa
-honnef.co/go/tools/ssautil
-honnef.co/go/tools/staticcheck
-honnef.co/go/tools/staticcheck/vrp
-honnef.co/go/tools/stylecheck
-honnef.co/go/tools/unused
-honnef.co/go/tools/version

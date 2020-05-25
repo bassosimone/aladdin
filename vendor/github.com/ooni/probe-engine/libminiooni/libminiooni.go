@@ -4,6 +4,7 @@
 package libminiooni
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -19,26 +20,30 @@ import (
 	"github.com/apex/log"
 	engine "github.com/ooni/probe-engine"
 	"github.com/ooni/probe-engine/internal/humanizex"
+	"github.com/ooni/probe-engine/model"
+	"github.com/ooni/probe-engine/netx/selfcensor"
 	"github.com/ooni/probe-engine/version"
 	"github.com/pborman/getopt/v2"
 )
 
 // Options contains the options you can set from the CLI.
 type Options struct {
-	Annotations  []string
-	BouncerURL   string
-	CollectorURL string
-	Inputs       []string
-	ExtraOptions []string
-	NoBouncer    bool
-	NoGeoIP      bool
-	NoJSON       bool
-	NoCollector  bool
-	Proxy        string
-	ReportFile   string
-	TorArgs      []string
-	TorBinary    string
-	Verbose      bool
+	Annotations    []string
+	BouncerURL     string
+	CollectorURL   string
+	Inputs         []string
+	ExtraOptions   []string
+	NoBouncer      bool
+	NoGeoIP        bool
+	NoJSON         bool
+	NoCollector    bool
+	Proxy          string
+	ReportFile     string
+	SelfCensorSpec string
+	TorArgs        []string
+	TorBinary      string
+	Tunnel         string
+	Verbose        bool
 }
 
 const (
@@ -91,12 +96,20 @@ func init() {
 		"Set the report file path", "PATH",
 	)
 	getopt.FlagLong(
+		&globalOptions.SelfCensorSpec, "self-censor-spec", 0,
+		"Enable and configure self censorship", "JSON",
+	)
+	getopt.FlagLong(
 		&globalOptions.TorArgs, "tor-args", 0,
 		"Extra args for tor binary (may be specified multiple times)",
 	)
 	getopt.FlagLong(
 		&globalOptions.TorBinary, "tor-binary", 0,
 		"Specify path to a specific tor binary",
+	)
+	getopt.FlagLong(
+		&globalOptions.Tunnel, "tunnel", 0,
+		"Name of the tunnel to use (one of `tor`, `psiphon`)",
 	)
 	getopt.FlagLong(
 		&globalOptions.Verbose, "verbose", 'v', "Increase verbosity",
@@ -205,6 +218,9 @@ func MainWithConfiguration(experimentName string, currentOptions Options) {
 	extraOptions := mustMakeMap(currentOptions.ExtraOptions)
 	annotations := mustMakeMap(currentOptions.Annotations)
 
+	err := selfcensor.MaybeEnable(currentOptions.SelfCensorSpec)
+	fatalOnError(err, "cannot parse --self-censor-spec argument")
+
 	logger := &log.Logger{Level: log.InfoLevel, Handler: &logHandler{Writer: os.Stderr}}
 	if currentOptions.Verbose {
 		logger.Level = log.DebugLevel
@@ -218,7 +234,7 @@ func MainWithConfiguration(experimentName string, currentOptions Options) {
 	fatalIfFalse(homeDir != "", "home directory is empty")
 	miniooniDir := path.Join(homeDir, ".miniooni")
 	assetsDir := path.Join(miniooniDir, "assets")
-	err := os.MkdirAll(assetsDir, 0700)
+	err = os.MkdirAll(assetsDir, 0700)
 	fatalOnError(err, "cannot create assets directory")
 	log.Infof("miniooni state directory: %s", miniooniDir)
 	tempDir, err := ioutil.TempDir("", "miniooni")
@@ -234,17 +250,38 @@ func MainWithConfiguration(experimentName string, currentOptions Options) {
 	kvstore, err := engine.NewFileSystemKVStore(kvstore2dir)
 	fatalOnError(err, "cannot create kvstore2 directory")
 
-	sess, err := engine.NewSession(engine.SessionConfig{
-		AssetsDir:       assetsDir,
-		KVStore:         kvstore,
-		Logger:          logger,
+	config := engine.SessionConfig{
+		AssetsDir: assetsDir,
+		KVStore:   kvstore,
+		Logger:    logger,
+		PrivacySettings: model.PrivacySettings{
+			IncludeASN:     true,
+			IncludeCountry: true,
+		},
 		ProxyURL:        proxyURL,
 		SoftwareName:    softwareName,
 		SoftwareVersion: softwareVersion,
 		TempDir:         tempDir,
 		TorArgs:         currentOptions.TorArgs,
 		TorBinary:       currentOptions.TorBinary,
-	})
+	}
+	if currentOptions.BouncerURL != "" {
+		config.AvailableBouncers = []model.Service{{
+			Address: currentOptions.BouncerURL,
+			Type:    "https",
+		}}
+	}
+	if currentOptions.CollectorURL != "" {
+		// Implementation note: setting the collector before doing the lookup
+		// is totally fine because it's a maybe lookup, meaning that any bit
+		// of information already available will not be looked up again.
+		config.AvailableCollectors = []model.Service{{
+			Address: currentOptions.CollectorURL,
+			Type:    "https",
+		}}
+	}
+
+	sess, err := engine.NewSession(config)
 	fatalOnError(err, "cannot create measurement session")
 	defer func() {
 		sess.Close()
@@ -254,15 +291,8 @@ func MainWithConfiguration(experimentName string, currentOptions Options) {
 		)
 	}()
 
-	if currentOptions.BouncerURL != "" {
-		sess.AddAvailableHTTPSBouncer(currentOptions.BouncerURL)
-	}
-	if currentOptions.CollectorURL != "" {
-		// Implementation note: setting the collector before doing the lookup
-		// is totally fine because it's a maybe lookup, meaning that any bit
-		// of information already available will not be looked up again.
-		sess.AddAvailableHTTPSCollector(currentOptions.CollectorURL)
-	}
+	err = sess.MaybeStartTunnel(context.Background(), currentOptions.Tunnel)
+	fatalOnError(err, "cannot start session tunnel")
 
 	if !currentOptions.NoBouncer {
 		log.Info("Looking up OONI backends; please be patient...")
@@ -298,7 +328,9 @@ func MainWithConfiguration(experimentName string, currentOptions Options) {
 			}
 		}
 	} else if builder.InputPolicy() == engine.InputOptional {
-		// nothing
+		if len(currentOptions.Inputs) == 0 {
+			currentOptions.Inputs = append(currentOptions.Inputs, "")
+		}
 	} else if len(currentOptions.Inputs) != 0 {
 		fatalWithString("this experiment does not expect any input")
 	} else {
