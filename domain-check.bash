@@ -87,12 +87,9 @@ require jq "sudo apt install jq (or sudo apk add jq)"
 require openssl "sudo apt install openssl (or sudo apk add openssl)"
 require uuidgen "sudo apt install uuid-runtime (or sudo apk add util-linux)"
 
-log_file=aladdin.log
-log -n "removing stale $log_file and temp files from previous runs if needed... "
-rm -f $log_file
-mkdir -p ./tmp
-rm -f ./tmp/aladdin.*
-log "done"
+measurement_path=`date +%Y%m%dT%H%M%SZ`-`basename $1`
+mkdir -p ./tmp/"$measurement_path"
+log_file=./tmp/"$measurement_path"/aladdin.log
 
 function run() {
   echo ""      >> $log_file
@@ -100,7 +97,7 @@ function run() {
   "$@"        2>> $log_file
 }
 
-report_file=report.jsonl
+report_file=./tmp/"$measurement_path"/report.jsonl
 
 function fatal_with_logs() {
   log "$@"
@@ -129,7 +126,7 @@ extra_options=${MINIOONI_EXTRA_OPTIONS}
 log "$extra_options"
 
 function urlgetter() {
-  run ./aladdin -v $extra_options -Asession=$uuid "$@" urlgetter
+  run ./aladdin -v $extra_options -o $report_file -Asession=$uuid "$@" urlgetter
 }
 
 function getipv4first() {
@@ -157,7 +154,7 @@ function getipv4list() {
 }
 
 function getcertificatefile() {
-  local filename=$(mktemp ./tmp/aladdin.XXXXXX)
+  local filename=$(mktemp ./tmp/"$measurement_path"/aladdin.XXXXXX)
   tail -n1 report.jsonl|jq -r '.test_keys.tls_handshakes|.[]|.peer_certificates|.[0]|.data'|base64 -d > $filename
   echo $filename
 }
@@ -179,13 +176,13 @@ function printcertificate() {
 
 function getbodyfile() {
   # Implementation note: requests stored in LIFO order
-  local filename=$(mktemp ./tmp/aladdin.XXXXXX)
+  local filename=$(mktemp ./tmp/"$measurement_path"/aladdin.XXXXXX)
   tail -n1 $report_file|jq -r ".test_keys.requests|.[0]|.response.body" > $filename
   echo $filename
 }
 
 function diffbodyfile() {
-  local filename=$(mktemp ./tmp/aladdin.XXXXXX)
+  local filename=$(mktemp ./tmp/"$measurement_path"/aladdin.XXXXXX)
   diff -u $1 $2 > $filename
   echo $filename
 }
@@ -225,7 +222,7 @@ function main() {
   checking "for IPv4 addresses returned by the system resolver"
   # Implementation note: with dns_bogons_error we still have the IP addresses
   # available inside the response, so we can read then
-  ipv4_system_list=$(mktemp ./tmp/aladdin.XXXXXX)
+  ipv4_system_list=$(mktemp ./tmp/"$measurement_path"/aladdin.XXXXXX)
   getipv4list $domain > $ipv4_system_list
   log $(cat $ipv4_system_list)
 
@@ -234,7 +231,7 @@ function main() {
             "$doh_cache" \
             $doh_url \
             -idnslookup://$domain
-  ipv4_doh_list=$(mktemp ./tmp/aladdin.XXXXXX)
+  ipv4_doh_list=$(mktemp ./tmp/"$measurement_path"/aladdin.XXXXXX)
   getipv4list $domain > $ipv4_doh_list
   log $(cat $ipv4_doh_list)
 
