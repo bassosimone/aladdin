@@ -113,8 +113,8 @@ log -n "building the latest version of miniooni (may take long time!)... "
 must run go build -tags nomk ./cmd/aladdin
 log "done"
 
-doh_cache="-ODNSCache=dns.google 8.8.8.8 8.8.4.4"
-doh_url="-OResolverURL=doh://google"
+doh_cache="-ODNSCache=cloudflare-dns.com 1.0.0.1 1.1.1.1"
+doh_url="-OResolverURL=doh://cloudflare"
 log "options used to enable alternative resolver: \"$doh_cache\" $doh_url"
 
 checking "for test helper to use"
@@ -155,7 +155,7 @@ function getipv4list() {
 
 function getcertificatefile() {
   local filename=$(mktemp ./tmp/"$measurement_path"/aladdin.XXXXXX)
-  tail -n1 report.jsonl|jq -r '.test_keys.tls_handshakes|.[]|.peer_certificates|.[0]|.data'|base64 -d > $filename
+  tail -n1 $report_file|jq -r '.test_keys.tls_handshakes|.[]|.peer_certificates|.[0]|.data'|base64 -d > $filename
   echo $filename
 }
 
