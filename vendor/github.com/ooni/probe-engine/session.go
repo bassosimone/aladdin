@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"sync"
 	"time"
@@ -28,47 +30,47 @@ import (
 	"github.com/ooni/probe-engine/netx/bytecounter"
 	"github.com/ooni/probe-engine/netx/httptransport"
 	"github.com/ooni/probe-engine/probeservices"
+	"github.com/ooni/probe-engine/version"
 )
 
 // SessionConfig contains the Session config
 type SessionConfig struct {
-	AssetsDir           string
-	AvailableBouncers   []model.Service
-	AvailableCollectors []model.Service
-	KVStore             KVStore
-	Logger              model.Logger
-	PrivacySettings     model.PrivacySettings
-	ProxyURL            *url.URL
-	SoftwareName        string
-	SoftwareVersion     string
-	TempDir             string
-	TorArgs             []string
-	TorBinary           string
+	AssetsDir              string
+	AvailableProbeServices []model.Service
+	KVStore                KVStore
+	Logger                 model.Logger
+	PrivacySettings        model.PrivacySettings
+	ProxyURL               *url.URL
+	SoftwareName           string
+	SoftwareVersion        string
+	TempDir                string
+	TorArgs                []string
+	TorBinary              string
 }
 
 // Session is a measurement session
 type Session struct {
-	assetsDir            string
-	availableBouncers    []model.Service
-	availableCollectors  []model.Service
-	availableTestHelpers map[string][]model.Service
-	byteCounter          *bytecounter.Counter
-	httpDefaultTransport httptransport.RoundTripper
-	kvStore              model.KeyValueStore
-	privacySettings      model.PrivacySettings
-	location             *model.LocationInfo
-	logger               model.Logger
-	proxyURL             *url.URL
-	queryBouncerCount    *atomicx.Int64
-	resolver             *sessionresolver.Resolver
-	softwareName         string
-	softwareVersion      string
-	tempDir              string
-	torArgs              []string
-	torBinary            string
-	tunnelMu             sync.Mutex
-	tunnelName           string
-	tunnel               sessiontunnel.Tunnel
+	assetsDir               string
+	availableProbeServices  []model.Service
+	availableTestHelpers    map[string][]model.Service
+	byteCounter             *bytecounter.Counter
+	httpDefaultTransport    httptransport.RoundTripper
+	kvStore                 model.KeyValueStore
+	privacySettings         model.PrivacySettings
+	location                *model.LocationInfo
+	logger                  model.Logger
+	proxyURL                *url.URL
+	queryProbeServicesCount *atomicx.Int64
+	resolver                *sessionresolver.Resolver
+	selectedProbeService    *model.Service
+	softwareName            string
+	softwareVersion         string
+	tempDir                 string
+	torArgs                 []string
+	torBinary               string
+	tunnelMu                sync.Mutex
+	tunnelName              string
+	tunnel                  sessiontunnel.Tunnel
 }
 
 // NewSession creates a new session or returns an error
@@ -85,27 +87,31 @@ func NewSession(config SessionConfig) (*Session, error) {
 	if config.SoftwareVersion == "" {
 		return nil, errors.New("SoftwareVersion is empty")
 	}
-	if config.TempDir == "" {
-		return nil, errors.New("TempDir is empty")
-	}
 	if config.KVStore == nil {
 		config.KVStore = kvstore.NewMemoryKeyValueStore()
 	}
+	// Implementation note: if config.TempDir is empty, then Go will
+	// use the temporary directory on the current system. This should
+	// work on Desktop. We tested that it did also work on iOS, but
+	// we have also seen on 2020-06-10 that it does not work on Android.
+	tempDir, err := ioutil.TempDir(config.TempDir, "ooniengine")
+	if err != nil {
+		return nil, err
+	}
 	sess := &Session{
-		assetsDir:           config.AssetsDir,
-		availableBouncers:   config.AvailableBouncers,
-		availableCollectors: config.AvailableCollectors,
-		byteCounter:         bytecounter.New(),
-		kvStore:             config.KVStore,
-		privacySettings:     config.PrivacySettings,
-		logger:              config.Logger,
-		proxyURL:            config.ProxyURL,
-		queryBouncerCount:   atomicx.NewInt64(),
-		softwareName:        config.SoftwareName,
-		softwareVersion:     config.SoftwareVersion,
-		tempDir:             config.TempDir,
-		torArgs:             config.TorArgs,
-		torBinary:           config.TorBinary,
+		assetsDir:               config.AssetsDir,
+		availableProbeServices:  config.AvailableProbeServices,
+		byteCounter:             bytecounter.New(),
+		kvStore:                 config.KVStore,
+		privacySettings:         config.PrivacySettings,
+		logger:                  config.Logger,
+		proxyURL:                config.ProxyURL,
+		queryProbeServicesCount: atomicx.NewInt64(),
+		softwareName:            config.SoftwareName,
+		softwareVersion:         config.SoftwareVersion,
+		tempDir:                 tempDir,
+		torArgs:                 config.TorArgs,
+		torBinary:               config.TorBinary,
 	}
 	httpConfig := httptransport.Config{
 		ByteCounter:  sess.byteCounter,
@@ -142,15 +148,17 @@ func (s *Session) CABundlePath() string {
 }
 
 // Close ensures that we close all the idle connections that the HTTP clients
-// we are currently using may have created. Not calling this function may likely
-// cause memory leaks in your application because of open idle connections.
+// we are currently using may have created. It will also remove the temp dir
+// that contains data from this session. Not calling this function may likely
+// cause memory leaks in your application because of open idle connections,
+// as well as excessive usage of disk space.
 func (s *Session) Close() error {
 	s.httpDefaultTransport.CloseIdleConnections()
 	s.resolver.CloseIdleConnections()
 	if s.tunnel != nil {
 		s.tunnel.Stop()
 	}
-	return nil
+	return os.RemoveAll(s.tempDir)
 }
 
 // CountryDatabasePath is like ASNDatabasePath but for the country DB path.
@@ -206,9 +214,17 @@ func (s *Session) MaybeStartTunnel(ctx context.Context, name string) error {
 	s.tunnelMu.Lock()
 	defer s.tunnelMu.Unlock()
 	if s.tunnel != nil && s.tunnelName == name {
+		// We've been asked more than once to start the same tunnel.
+		return nil
+	}
+	if s.proxyURL != nil && name == "" {
+		// The user configured a proxy and here we're not actually trying
+		// to start any tunnel since `name` is empty.
 		return nil
 	}
 	if s.proxyURL != nil || s.tunnel != nil {
+		// We already have a proxy or we have a different tunnel. Because a tunnel
+		// sets a proxy, the second check for s.tunnel is for robustness.
 		return ErrAlreadyUsingProxy
 	}
 	tunnel, err := sessiontunnel.Start(ctx, sessiontunnel.Config{
@@ -381,8 +397,10 @@ func (s *Session) TunnelBootstrapTime() time.Duration {
 }
 
 // UserAgent constructs the user agent to be used in this session.
-func (s *Session) UserAgent() string {
-	return s.softwareName + "/" + s.softwareVersion
+func (s *Session) UserAgent() (useragent string) {
+	useragent += s.softwareName + "/" + s.softwareVersion
+	useragent += " ooniprobe-engine/" + version.Version
+	return
 }
 
 func (s *Session) fetchResourcesIdempotent(ctx context.Context) error {
@@ -394,9 +412,9 @@ func (s *Session) fetchResourcesIdempotent(ctx context.Context) error {
 	}).Ensure(ctx)
 }
 
-func (s *Session) getAvailableBouncers() []model.Service {
-	if len(s.availableBouncers) > 0 {
-		return s.availableBouncers
+func (s *Session) getAvailableProbeServices() []model.Service {
+	if len(s.availableProbeServices) > 0 {
+		return s.availableProbeServices
 	}
 	return probeservices.Default()
 }
@@ -448,23 +466,21 @@ func (s *Session) lookupResolverIP(ctx context.Context) (string, error) {
 	return resolverlookup.First(ctx, nil)
 }
 
-func (s *Session) maybeLookupBackends(ctx context.Context) (err error) {
-	err = s.maybeLookupCollectors(ctx)
-	if err != nil {
-		return
-	}
-	err = s.maybeLookupTestHelpers(ctx)
-	return
-}
-
-func (s *Session) maybeLookupCollectors(ctx context.Context) error {
-	if len(s.availableCollectors) > 0 {
+func (s *Session) maybeLookupBackends(ctx context.Context) error {
+	// TODO(bassosimone): do we need a mutex here?
+	if s.selectedProbeService != nil {
 		return nil
 	}
-	return s.queryBouncer(ctx, func(client *probeservices.Client) (err error) {
-		s.availableCollectors, err = client.GetCollectors(ctx)
-		return
-	})
+	s.queryProbeServicesCount.Add(1)
+	candidates := probeservices.TryAll(ctx, s, s.getAvailableProbeServices())
+	selected := probeservices.SelectBest(candidates)
+	if selected == nil {
+		return errors.New("all available probe services failed")
+	}
+	s.logger.Infof("session: using probe services: %+v", selected.Endpoint)
+	s.selectedProbeService = &selected.Endpoint
+	s.availableTestHelpers = selected.TestHelpers
+	return nil
 }
 
 func (s *Session) maybeLookupLocation(ctx context.Context) (err error) {
@@ -510,33 +526,6 @@ func (s *Session) maybeLookupLocation(ctx context.Context) (err error) {
 		}
 	}
 	return
-}
-
-func (s *Session) maybeLookupTestHelpers(ctx context.Context) error {
-	if len(s.availableTestHelpers) > 0 {
-		return nil
-	}
-	return s.queryBouncer(ctx, func(client *probeservices.Client) (err error) {
-		s.availableTestHelpers, err = client.GetTestHelpers(ctx)
-		return
-	})
-}
-
-func (s *Session) queryBouncer(ctx context.Context, query func(*probeservices.Client) error) error {
-	s.queryBouncerCount.Add(1)
-	for _, e := range probeservices.SortEndpoints(s.getAvailableBouncers()) {
-		client, err := probeservices.NewClient(s, e)
-		if err != nil {
-			s.logger.Debugf("%+v", err)
-			continue
-		}
-		err = query(client)
-		if err == nil {
-			return nil
-		}
-		s.logger.Warnf("session: bouncer error: %s", err.Error())
-	}
-	return errors.New("All available bouncers failed")
 }
 
 var _ model.ExperimentSession = &Session{}

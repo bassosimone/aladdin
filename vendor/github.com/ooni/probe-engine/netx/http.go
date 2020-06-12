@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/ooni/probe-engine/netx/errorx"
 	"github.com/ooni/probe-engine/netx/handlers"
-	"github.com/ooni/probe-engine/netx/internal/errwrapper"
 	"github.com/ooni/probe-engine/netx/modelx"
 	"github.com/ooni/probe-engine/netx/oldhttptransport"
 	"golang.org/x/net/http2"
@@ -79,12 +79,12 @@ func (t *HTTPTransport) RoundTrip(
 	ctx := maybeWithMeasurementRoot(req.Context(), t.Beginning, t.Handler)
 	req = req.WithContext(ctx)
 	resp, err = t.roundTripper.RoundTrip(req)
-	// For safety wrap the error as "http_round_trip" but this
+	// For safety wrap the error as modelx.HTTPRoundTripOperation but this
 	// will only be used if the error chain does not contain any
 	// other major operation failure. See modelx.ErrWrapper.
-	err = errwrapper.SafeErrWrapperBuilder{
+	err = errorx.SafeErrWrapperBuilder{
 		Error:     err,
-		Operation: "http_round_trip",
+		Operation: modelx.HTTPRoundTripOperation,
 	}.MaybeBuild()
 	return resp, err
 }

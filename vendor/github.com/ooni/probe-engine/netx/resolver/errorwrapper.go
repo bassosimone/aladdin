@@ -3,9 +3,10 @@ package resolver
 import (
 	"context"
 
+	"github.com/ooni/probe-engine/netx/errorx"
 	"github.com/ooni/probe-engine/netx/internal/dialid"
-	"github.com/ooni/probe-engine/netx/internal/errwrapper"
 	"github.com/ooni/probe-engine/netx/internal/transactionid"
+	"github.com/ooni/probe-engine/netx/modelx"
 )
 
 // ErrorWrapperResolver is a Resolver that knows about wrapping errors.
@@ -18,10 +19,10 @@ func (r ErrorWrapperResolver) LookupHost(ctx context.Context, hostname string) (
 	dialID := dialid.ContextDialID(ctx)
 	txID := transactionid.ContextTransactionID(ctx)
 	addrs, err := r.Resolver.LookupHost(ctx, hostname)
-	err = errwrapper.SafeErrWrapperBuilder{
+	err = errorx.SafeErrWrapperBuilder{
 		DialID:        dialID,
 		Error:         err,
-		Operation:     "resolve",
+		Operation:     modelx.ResolveOperation,
 		TransactionID: txID,
 	}.MaybeBuild()
 	return addrs, err

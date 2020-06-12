@@ -13,8 +13,6 @@ github.com/Psiphon-Labs/bolt
 # github.com/Psiphon-Labs/chacha20 v0.2.1-0.20200128191310-899a4be52863
 github.com/Psiphon-Labs/chacha20
 github.com/Psiphon-Labs/chacha20/internal/subtle
-# github.com/Psiphon-Labs/dns v0.0.0-20170814182607-d23cdaf67bbc
-github.com/Psiphon-Labs/dns
 # github.com/Psiphon-Labs/goarista v0.0.0-20160825065156-d002785f4c67
 github.com/Psiphon-Labs/goarista/monotime
 # github.com/Psiphon-Labs/goptlib v0.0.0-20200406165125-c0e32a7a3464
@@ -24,7 +22,7 @@ github.com/Psiphon-Labs/net/http/httpguts
 github.com/Psiphon-Labs/net/http2
 github.com/Psiphon-Labs/net/http2/hpack
 github.com/Psiphon-Labs/net/idna
-# github.com/Psiphon-Labs/psiphon-tunnel-core v2.0.11+incompatible
+# github.com/Psiphon-Labs/psiphon-tunnel-core v2.0.12-0.20200608133602-4698936ee666+incompatible
 github.com/Psiphon-Labs/psiphon-tunnel-core/ClientLibrary/clientlib
 github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon
 github.com/Psiphon-Labs/psiphon-tunnel-core/psiphon/common
@@ -78,13 +76,13 @@ github.com/Psiphon-Labs/quic-go/internal/utils
 github.com/Psiphon-Labs/quic-go/internal/wire
 github.com/Psiphon-Labs/quic-go/quictrace
 github.com/Psiphon-Labs/quic-go/quictrace/pb
-# github.com/Psiphon-Labs/tls-tris v0.0.0-20200326183334-7ff412878bba
+# github.com/Psiphon-Labs/tls-tris v0.0.0-20200504183724-16ab4b2ea797
 github.com/Psiphon-Labs/tls-tris
 github.com/Psiphon-Labs/tls-tris/cipherhw
 # github.com/agl/ed25519 v0.0.0-20170116200512-5312a6153412
 github.com/agl/ed25519/edwards25519
 github.com/agl/ed25519/extra25519
-# github.com/apex/log v1.1.4
+# github.com/apex/log v1.3.0
 github.com/apex/log
 # github.com/armon/go-proxyproto v0.0.0-20180202201750-5b7edb60ff5f
 github.com/armon/go-proxyproto
@@ -138,22 +136,15 @@ github.com/iancoleman/strcase
 github.com/juju/ratelimit
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/m-lab/ndt-server v0.13.4
-github.com/m-lab/ndt-server/metadata
-github.com/m-lab/ndt-server/ndt7/model
-# github.com/m-lab/ndt7-client-go v0.3.0
-github.com/m-lab/ndt7-client-go/spec
-# github.com/m-lab/tcp-info v1.3.0
-github.com/m-lab/tcp-info/tcp
 # github.com/marten-seemann/qpack v0.1.0
 github.com/marten-seemann/qpack
 # github.com/marten-seemann/qtls v0.4.1
 github.com/marten-seemann/qtls
-# github.com/miekg/dns v1.1.29
+# github.com/miekg/dns v1.1.30-0.20200428072418-d128d10d176b
 github.com/miekg/dns
 # github.com/montanaflynn/stats v0.6.3
 github.com/montanaflynn/stats
-# github.com/ooni/probe-engine v0.11.1-0.20200522123417-8dd946a956f2
+# github.com/ooni/probe-engine v0.13.0
 ## explicit
 github.com/ooni/probe-engine
 github.com/ooni/probe-engine/atomicx
@@ -169,6 +160,7 @@ github.com/ooni/probe-engine/experiment/mkrunner
 github.com/ooni/probe-engine/experiment/ndt7
 github.com/ooni/probe-engine/experiment/psiphon
 github.com/ooni/probe-engine/experiment/sniblocking
+github.com/ooni/probe-engine/experiment/stunreachability
 github.com/ooni/probe-engine/experiment/telegram
 github.com/ooni/probe-engine/experiment/tor
 github.com/ooni/probe-engine/experiment/urlgetter
@@ -215,11 +207,11 @@ github.com/ooni/probe-engine/netx
 github.com/ooni/probe-engine/netx/archival
 github.com/ooni/probe-engine/netx/bytecounter
 github.com/ooni/probe-engine/netx/dialer
+github.com/ooni/probe-engine/netx/errorx
 github.com/ooni/probe-engine/netx/handlers
 github.com/ooni/probe-engine/netx/httptransport
 github.com/ooni/probe-engine/netx/internal/connid
 github.com/ooni/probe-engine/netx/internal/dialid
-github.com/ooni/probe-engine/netx/internal/errwrapper
 github.com/ooni/probe-engine/netx/internal/transactionid
 github.com/ooni/probe-engine/netx/modelx
 github.com/ooni/probe-engine/netx/oldhttptransport
@@ -234,6 +226,9 @@ github.com/oschwald/geoip2-golang
 github.com/oschwald/maxminddb-golang
 # github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3
 github.com/pborman/getopt/v2
+# github.com/pion/stun v0.3.5
+github.com/pion/stun
+github.com/pion/stun/internal/hmac
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
 # github.com/redjack/marionette v0.0.0-20180818172807-360dd8f58226
@@ -251,7 +246,7 @@ github.com/redjack/marionette/regex2dfa
 # github.com/refraction-networking/gotapdance v0.0.0-20190909202946-3a6e1938ad70
 github.com/refraction-networking/gotapdance/protobuf
 github.com/refraction-networking/gotapdance/tapdance
-# github.com/refraction-networking/utls v0.0.0-20190909200633-43c36d3c1f57
+# github.com/refraction-networking/utls v0.0.0-20200601200209-ada0bb9b38a0
 github.com/refraction-networking/utls
 github.com/refraction-networking/utls/cpu
 # github.com/rogpeppe/go-internal v1.6.0
@@ -265,6 +260,8 @@ github.com/sergeyfrolov/bsbuffer
 github.com/sirupsen/logrus
 # github.com/syndtr/gocapability v0.0.0-20170704070218-db04d3cc01c8
 github.com/syndtr/gocapability/capability
+# github.com/wader/filtertransport v0.0.0-20200316221534-bdd9e61eee78
+github.com/wader/filtertransport
 # github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea
 github.com/zach-klippenstein/goregen
 # gitlab.com/yawning/obfs4.git v0.0.0-20200410113629-2d8f3c8bbfd7
@@ -299,7 +296,7 @@ go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
-# golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
+# golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/chacha20
 golang.org/x/crypto/chacha20poly1305
@@ -315,7 +312,7 @@ golang.org/x/crypto/nacl/secretbox
 golang.org/x/crypto/poly1305
 golang.org/x/crypto/salsa20/salsa
 golang.org/x/crypto/sha3
-# golang.org/x/net v0.0.0-20200513185701-a91f0712d120
+# golang.org/x/net v0.0.0-20200602114024-627f9648deb9
 golang.org/x/net/bpf
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
@@ -330,7 +327,7 @@ golang.org/x/net/ipv4
 golang.org/x/net/ipv6
 golang.org/x/net/proxy
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20200513112337-417ce2331b5c
+# golang.org/x/sys v0.0.0-20200610111108-226ff32320da
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix

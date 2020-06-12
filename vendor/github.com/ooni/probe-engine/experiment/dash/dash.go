@@ -18,7 +18,9 @@ import (
 	"github.com/montanaflynn/stats"
 	"github.com/ooni/probe-engine/internal/humanizex"
 	"github.com/ooni/probe-engine/model"
+	"github.com/ooni/probe-engine/netx/archival"
 	"github.com/ooni/probe-engine/netx/httptransport"
+	"github.com/ooni/probe-engine/netx/modelx"
 	"github.com/ooni/probe-engine/netx/trace"
 )
 
@@ -65,6 +67,10 @@ type TestKeys struct {
 	ReceiverData  []clientResults `json:"receiver_data"`
 	SOCKSProxy    string          `json:"socksproxy,omitempty"`
 	Tunnel        string          `json:"tunnel,omitempty"`
+}
+
+func registerExtensions(m *model.Measurement) {
+	archival.ExtTunnel.AddTo(m)
 }
 
 type runner struct {
@@ -177,7 +183,7 @@ func (r runner) measure(
 		// of the latest connect time. We should have one sample in most
 		// cases, because the connection should be persistent.
 		for _, ev := range r.saver.Read() {
-			if ev.Name == "connect" {
+			if ev.Name == modelx.ConnectOperation {
 				connectTime = ev.Duration.Seconds()
 			}
 		}
@@ -257,6 +263,7 @@ func (m measurer) Run(
 ) error {
 	tk := new(TestKeys)
 	measurement.TestKeys = tk
+	registerExtensions(measurement)
 	tk.Tunnel = m.config.Tunnel
 	if err := sess.MaybeStartTunnel(ctx, m.config.Tunnel); err != nil {
 		s := err.Error()

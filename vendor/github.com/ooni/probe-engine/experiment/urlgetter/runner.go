@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 
 	"github.com/ooni/probe-engine/internal/httpheader"
@@ -42,7 +43,8 @@ func (r Runner) Run(ctx context.Context) error {
 }
 
 func (r Runner) httpGet(ctx context.Context, url string) error {
-	req, err := http.NewRequest("GET", url, nil)
+	// Implementation note: empty Method implies using the GET method
+	req, err := http.NewRequest(r.Config.Method, url, nil)
 	runtimex.PanicOnError(err, "http.NewRequest failed")
 	req = req.WithContext(ctx)
 	req.Header.Set("Accept", httpheader.RandomAccept())
@@ -51,7 +53,15 @@ func (r Runner) httpGet(ctx context.Context, url string) error {
 	if r.Config.HTTPHost != "" {
 		req.Host = r.Config.HTTPHost
 	}
-	httpClient := &http.Client{Transport: httptransport.New(r.HTTPConfig)}
+	// Implementation note: the following cookiejar accepts all cookies
+	// from all domains. As such, would not be safe for usage where cookies
+	// matter, but it's totally fine for performing measurements.
+	jar, err := cookiejar.New(nil)
+	runtimex.PanicOnError(err, "cookiejar.New failed")
+	httpClient := &http.Client{
+		Jar:       jar,
+		Transport: httptransport.New(r.HTTPConfig),
+	}
 	if r.Config.NoFollowRedirects {
 		httpClient.CheckRedirect = func(*http.Request, []*http.Request) error {
 			return http.ErrUseLastResponse
