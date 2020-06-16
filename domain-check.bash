@@ -264,7 +264,7 @@ function main() {
   printcertificate
   body_noverify=$(getbodyfile)
   log "webpage body available at... $body_noverify"
-  checking "whether we obtain the same body using psiphon"
+  checking "whether we obtain the same body when removing TLS validation"
   body_diff=$(diffbodyfile $body_noverify $body_tunnel)
   { [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
 
@@ -276,8 +276,21 @@ function main() {
   printcertificate
   body_doh=$(getbodyfile)
   log "webpage body available at... $body_doh"
-  checking "whether we obtain the same body using psiphon"
+  checking "whether we obtain the same body using the alternate resolver"
   body_diff=$(diffbodyfile $body_doh $body_tunnel)
+  { [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
+
+  checking "whether we can retrieve a webpage using TLSv1.3 and DoH"
+  urlgetter -Astep=tls_v1_3_and_doh \
+            -OTLSVersion=TLSv1.3 \
+            "-ODNSCache=$domain $(cat $ipv4_doh_list)" \
+            -ihttps://$domain/
+  { [ "$(getfailure)" = "null" ] && log "yes"; } || log "no"
+  printcertificate
+  body_tls13=$(getbodyfile)
+  log "webpage body available at... $body_tls13"
+  checking "whether we obtain the same body using TLSv1.3 and DoH"
+  body_diff=$(diffbodyfile $body_tls13 $body_tunnel)
   { [ "$(cat $body_diff)" = "" ] && log "yes"; } || log "no (see $body_diff)"
 }
 
@@ -285,8 +298,7 @@ inputCounter=0
 while [[ $1 != "" ]]; do
   ((inputCounter++))
   log "[$inputCounter/$inputCount] running with input: $1"
-  main $1 &
-  wait
+  main $1
   sleep 1
   shift
 done
