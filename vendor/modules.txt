@@ -8,7 +8,7 @@ git.schwanenlied.me/yawning/bsaes.git/internal/modes
 git.torproject.org/pluggable-transports/goptlib.git
 # github.com/AndreasBriese/bbloom v0.0.0-20170702084017-28f7e881ca57
 github.com/AndreasBriese/bbloom
-# github.com/Psiphon-Labs/bolt v0.0.0-20200203172706-f3d58e369264
+# github.com/Psiphon-Labs/bolt v0.0.0-20200624191537-23cedaef7ad7
 github.com/Psiphon-Labs/bolt
 # github.com/Psiphon-Labs/chacha20 v0.2.1-0.20200128191310-899a4be52863
 github.com/Psiphon-Labs/chacha20
@@ -82,7 +82,7 @@ github.com/Psiphon-Labs/tls-tris/cipherhw
 # github.com/agl/ed25519 v0.0.0-20170116200512-5312a6153412
 github.com/agl/ed25519/edwards25519
 github.com/agl/ed25519/extra25519
-# github.com/apex/log v1.3.0
+# github.com/apex/log v1.4.0
 github.com/apex/log
 # github.com/armon/go-proxyproto v0.0.0-20180202201750-5b7edb60ff5f
 github.com/armon/go-proxyproto
@@ -144,7 +144,7 @@ github.com/marten-seemann/qtls
 github.com/miekg/dns
 # github.com/montanaflynn/stats v0.6.3
 github.com/montanaflynn/stats
-# github.com/ooni/probe-engine v0.13.0
+# github.com/ooni/probe-engine v0.14.0
 ## explicit
 github.com/ooni/probe-engine
 github.com/ooni/probe-engine/atomicx
@@ -171,25 +171,15 @@ github.com/ooni/probe-engine/geoiplookup/iplookup/avast
 github.com/ooni/probe-engine/geoiplookup/iplookup/ubuntu
 github.com/ooni/probe-engine/geoiplookup/mmdblookup
 github.com/ooni/probe-engine/geoiplookup/resolverlookup
-github.com/ooni/probe-engine/internal/fetch
 github.com/ooni/probe-engine/internal/httpheader
+github.com/ooni/probe-engine/internal/httpx
 github.com/ooni/probe-engine/internal/humanizex
-github.com/ooni/probe-engine/internal/jsonapi
 github.com/ooni/probe-engine/internal/kvstore
 github.com/ooni/probe-engine/internal/mlablocate
 github.com/ooni/probe-engine/internal/mlablocatev2
 github.com/ooni/probe-engine/internal/netxlogger
 github.com/ooni/probe-engine/internal/oonidatamodel
 github.com/ooni/probe-engine/internal/oonitemplates
-github.com/ooni/probe-engine/internal/orchestra
-github.com/ooni/probe-engine/internal/orchestra/login
-github.com/ooni/probe-engine/internal/orchestra/metadata
-github.com/ooni/probe-engine/internal/orchestra/register
-github.com/ooni/probe-engine/internal/orchestra/statefile
-github.com/ooni/probe-engine/internal/orchestra/testlists/psiphon
-github.com/ooni/probe-engine/internal/orchestra/testlists/tor
-github.com/ooni/probe-engine/internal/orchestra/testlists/urls
-github.com/ooni/probe-engine/internal/orchestra/update
 github.com/ooni/probe-engine/internal/platform
 github.com/ooni/probe-engine/internal/psiphonx
 github.com/ooni/probe-engine/internal/resources
@@ -198,7 +188,6 @@ github.com/ooni/probe-engine/internal/sessionresolver
 github.com/ooni/probe-engine/internal/sessiontunnel
 github.com/ooni/probe-engine/internal/tlsx
 github.com/ooni/probe-engine/internal/torx
-github.com/ooni/probe-engine/internal/urlpath
 github.com/ooni/probe-engine/libminiooni
 github.com/ooni/probe-engine/measurementkit
 github.com/ooni/probe-engine/measurementkit/mkcgo
@@ -222,7 +211,7 @@ github.com/ooni/probe-engine/probeservices
 github.com/ooni/probe-engine/version
 # github.com/oschwald/geoip2-golang v1.4.0
 github.com/oschwald/geoip2-golang
-# github.com/oschwald/maxminddb-golang v1.6.0
+# github.com/oschwald/maxminddb-golang v1.7.0
 github.com/oschwald/maxminddb-golang
 # github.com/pborman/getopt v0.0.0-20190409184431-ee0cd42419d3
 github.com/pborman/getopt/v2
@@ -296,7 +285,7 @@ go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
-# golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
+# golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/chacha20
 golang.org/x/crypto/chacha20poly1305
@@ -312,7 +301,7 @@ golang.org/x/crypto/nacl/secretbox
 golang.org/x/crypto/poly1305
 golang.org/x/crypto/salsa20/salsa
 golang.org/x/crypto/sha3
-# golang.org/x/net v0.0.0-20200602114024-627f9648deb9
+# golang.org/x/net v0.0.0-20200625001655-4c5254603344
 golang.org/x/net/bpf
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
@@ -327,7 +316,7 @@ golang.org/x/net/ipv4
 golang.org/x/net/ipv6
 golang.org/x/net/proxy
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20200610111108-226ff32320da
+# golang.org/x/sys v0.0.0-20200622214017-ed371f2e16b4
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix

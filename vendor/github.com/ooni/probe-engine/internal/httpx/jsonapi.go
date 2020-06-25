@@ -1,6 +1,5 @@
-// Package jsonapi interacts with HTTP JSON APIs. In OONI we use
-// this code when accessing API like, e.g., the OONI collector.
-package jsonapi
+// Package httpx contains http extensions.
+package httpx
 
 import (
 	"bytes"
@@ -16,7 +15,7 @@ import (
 	"github.com/ooni/probe-engine/netx/dialer"
 )
 
-// Client is a client for a JSON API.
+// Client is an extended client.
 type Client struct {
 	// Authorization contains the authorization header.
 	Authorization string
@@ -24,7 +23,7 @@ type Client struct {
 	// BaseURL is the base URL of the API.
 	BaseURL string
 
-	// HTTPClient is the http client to use.
+	// HTTPClient is the real http client to use.
 	HTTPClient *http.Client
 
 	// Host allows to set a specific host header. This is useful
@@ -42,21 +41,28 @@ type Client struct {
 	UserAgent string
 }
 
-// NewRequest creates a new request with a JSON body
-func (c Client) NewRequest(
+// NewRequestWithJSONBody creates a new request with a JSON body
+func (c Client) NewRequestWithJSONBody(
 	ctx context.Context, method, resourcePath string,
 	query url.Values, body interface{}) (*http.Request, error) {
 	data, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-	c.Logger.Debugf("jsonapi: request body: %d bytes", len(data))
-	return c.newRequestWithSerializedJSONBody(
+	c.Logger.Debugf("httpx: request body: %d bytes", len(data))
+	request, err := c.NewRequest(
 		ctx, method, resourcePath, query, bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+	if body != nil {
+		request.Header.Set("Content-Type", "application/json")
+	}
+	return request, nil
 }
 
-func (c Client) newRequestWithSerializedJSONBody(
-	ctx context.Context, method, resourcePath string,
+// NewRequest creates a new request.
+func (c Client) NewRequest(ctx context.Context, method, resourcePath string,
 	query url.Values, body io.Reader) (*http.Request, error) {
 	URL, err := url.Parse(c.BaseURL)
 	if err != nil {
@@ -66,16 +72,13 @@ func (c Client) newRequestWithSerializedJSONBody(
 	if query != nil {
 		URL.RawQuery = query.Encode()
 	}
-	c.Logger.Debugf("jsonapi: method: %s", method)
-	c.Logger.Debugf("jsonapi: URL: %s", URL.String())
+	c.Logger.Debugf("httpx: method: %s", method)
+	c.Logger.Debugf("httpx: URL: %s", URL.String())
 	request, err := http.NewRequest(method, URL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 	request.Host = c.Host // allow cloudfronting
-	if body != nil {
-		request.Header.Set("Content-Type", "application/json")
-	}
 	if c.Authorization != "" {
 		request.Header.Set("Authorization", c.Authorization)
 	}
@@ -88,63 +91,68 @@ func (c Client) newRequestWithSerializedJSONBody(
 	return request.WithContext(ctx), nil
 }
 
-// Do performs the provided request and unmarshals the JSON response body
-// into the provided output variable.
-func (c Client) Do(request *http.Request, output interface{}) error {
+// Do performs the provided request and returns the response body or an error.
+func (c Client) Do(request *http.Request) ([]byte, error) {
 	response, err := c.HTTPClient.Do(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer response.Body.Close()
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("jsonapi: request failed: %s", response.Status)
+		return nil, fmt.Errorf("httpx: request failed: %s", response.Status)
 	}
-	data, err := ioutil.ReadAll(response.Body)
+	return ioutil.ReadAll(response.Body)
+}
+
+// DoJSON performs the provided request and unmarshals the JSON response body
+// into the provided output variable.
+func (c Client) DoJSON(request *http.Request, output interface{}) error {
+	data, err := c.Do(request)
 	if err != nil {
 		return err
 	}
-	c.Logger.Debugf("jsonapi: response body: %d bytes", len(data))
+	c.Logger.Debugf("httpx: response body: %d bytes", len(data))
 	return json.Unmarshal(data, output)
 }
 
-// Read reads the JSON resource at resourcePath and unmarshals the
+// GetJSON reads the JSON resource at resourcePath and unmarshals the
 // results into output. The request is bounded by the lifetime of the
 // context passed as argument. Returns the error that occurred.
-func (c Client) Read(ctx context.Context, resourcePath string, output interface{}) error {
-	return c.ReadWithQuery(ctx, resourcePath, nil, output)
+func (c Client) GetJSON(ctx context.Context, resourcePath string, output interface{}) error {
+	return c.GetJSONWithQuery(ctx, resourcePath, nil, output)
 }
 
-// ReadWithQuery is like Read but also has a query.
-func (c Client) ReadWithQuery(
+// GetJSONWithQuery is like GetJSON but also has a query.
+func (c Client) GetJSONWithQuery(
 	ctx context.Context, resourcePath string,
 	query url.Values, output interface{}) error {
-	request, err := c.newRequestWithSerializedJSONBody(ctx, "GET", resourcePath, query, nil)
+	request, err := c.NewRequest(ctx, "GET", resourcePath, query, nil)
 	if err != nil {
 		return err
 	}
-	return c.Do(request, output)
+	return c.DoJSON(request, output)
 }
 
-// Create creates a JSON subresource of the resource at resourcePath
+// PostJSON creates a JSON subresource of the resource at resourcePath
 // using the JSON document at input and returning the result into the
 // JSON document at output. The request is bounded by the context's
 // lifetime. Returns the error that occurred.
-func (c Client) Create(
+func (c Client) PostJSON(
 	ctx context.Context, resourcePath string, input, output interface{}) error {
-	request, err := c.NewRequest(ctx, "POST", resourcePath, nil, input)
+	request, err := c.NewRequestWithJSONBody(ctx, "POST", resourcePath, nil, input)
 	if err != nil {
 		return err
 	}
-	return c.Do(request, output)
+	return c.DoJSON(request, output)
 }
 
-// Update updates a JSON resource at a specific path and returns
+// PutJSON updates a JSON resource at a specific path and returns
 // the error that occurred and possibly an output document
-func (c Client) Update(
+func (c Client) PutJSON(
 	ctx context.Context, resourcePath string, input, output interface{}) error {
-	request, err := c.NewRequest(ctx, "PUT", resourcePath, nil, input)
+	request, err := c.NewRequestWithJSONBody(ctx, "PUT", resourcePath, nil, input)
 	if err != nil {
 		return err
 	}
-	return c.Do(request, output)
+	return c.DoJSON(request, output)
 }

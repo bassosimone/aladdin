@@ -6,14 +6,10 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/ooni/probe-engine/internal/jsonapi"
+	"github.com/ooni/probe-engine/atomicx"
+	"github.com/ooni/probe-engine/internal/httpx"
 	"github.com/ooni/probe-engine/model"
 )
-
-// Client is a client for the OONI probe services API.
-type Client struct {
-	jsonapi.Client
-}
 
 var (
 	// ErrUnsupportedEndpoint indicates that we don't support this endpoint type.
@@ -24,17 +20,57 @@ var (
 	ErrUnsupportedCloudFrontAddress = errors.New(
 		"probe services: unsupported cloud front address",
 	)
+
+	// ErrNotRegistered indicates that the probe is not registered
+	// with the OONI orchestra backend.
+	ErrNotRegistered = errors.New("not registered")
+
+	// ErrNotLoggedIn indicates that we are not logged in
+	ErrNotLoggedIn = errors.New("not logged in")
+
+	// ErrInvalidMetadata indicates that the metadata is not valid
+	ErrInvalidMetadata = errors.New("invalid metadata")
 )
 
-// NewClient creates a new client for the specified probe services endpoint.
+// Client is a client for the OONI probe services API.
+type Client struct {
+	httpx.Client
+	LoginCalls    *atomicx.Int64
+	RegisterCalls *atomicx.Int64
+	StateFile     StateFile
+}
+
+// GetCredsAndAuth is an utility function that returns the credentials with
+// which we are registered and the token with which we're logged in. If we're
+// not registered or not logged in, an error is returned instead.
+func (c Client) GetCredsAndAuth() (*LoginCredentials, *LoginAuth, error) {
+	state := c.StateFile.Get()
+	creds := state.Credentials()
+	if creds == nil {
+		return nil, nil, ErrNotRegistered
+	}
+	auth := state.Auth()
+	if auth == nil {
+		return nil, nil, ErrNotLoggedIn
+	}
+	return creds, auth, nil
+}
+
+// NewClient creates a new client for the specified probe services endpoint. This
+// function fails, e.g., we don't support the specified endpoint.
 func NewClient(sess model.ExperimentSession, endpoint model.Service) (*Client, error) {
-	client := &Client{Client: jsonapi.Client{
-		BaseURL:    endpoint.Address,
-		HTTPClient: sess.DefaultHTTPClient(),
-		Logger:     sess.Logger(),
-		ProxyURL:   sess.ProxyURL(),
-		UserAgent:  sess.UserAgent(),
-	}}
+	client := &Client{
+		Client: httpx.Client{
+			BaseURL:    endpoint.Address,
+			HTTPClient: sess.DefaultHTTPClient(),
+			Logger:     sess.Logger(),
+			ProxyURL:   sess.ProxyURL(),
+			UserAgent:  sess.UserAgent(),
+		},
+		LoginCalls:    atomicx.NewInt64(),
+		RegisterCalls: atomicx.NewInt64(),
+		StateFile:     NewStateFile(sess.KeyValueStore()),
+	}
 	switch endpoint.Type {
 	case "https":
 		return client, nil
@@ -64,7 +100,10 @@ func NewClient(sess model.ExperimentSession, endpoint model.Service) (*Client, e
 // Default returns the default probe services
 func Default() []model.Service {
 	return []model.Service{{
-		Address: "https://ps.ooni.io",
+		Address: "https://ps1.ooni.io",
+		Type:    "https",
+	}, {
+		Address: "https://ps2.ooni.io",
 		Type:    "https",
 	}, {
 		Front:   "dkyhjv0wpi2dk.cloudfront.net",
