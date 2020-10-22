@@ -17,6 +17,9 @@ This is alpha code. We will you to explicitly acknowledge you understand
 the risks and OONI's privacy policy the first time you run the measurement
 script provided by this repository.
 
+We use this code for [investigating TLS blocking in India](
+https://ooni.org/post/2020-tls-blocking-india/).
+
 ## Using a Docker container
 
 Build a suitable docker container:
